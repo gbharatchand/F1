@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Explorer</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  min-height:100vh; display:flex; align-items:center; justify-content:center; padding:10px;
+}
+.container {
+  width:100%; max-width:1200px; background:#fff8e7; border-radius:30px;
+  padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.3); border:8px solid #ff6b9d;
+}
+.home { display:none; text-align:center; padding:40px 20px; }
+.home.active { display:block; }
+.home h1 { font-size:48px; color:#764ba2; margin-bottom:12px; }
+.home .sub { font-size:22px; color:#666; margin-bottom:30px; }
+.btn-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:24px 0; }
+.big-btn {
+  background:#ff6b9d; color:#fff; border:none; padding:18px 48px; font-size:22px;
+  font-weight:bold; border-radius:16px; cursor:pointer; transition:.2s;
+  box-shadow:0 4px 12px rgba(255,107,157,.4);
+}
+.big-btn:hover { transform:scale(1.05); }
+.big-btn.teal { background:#4ecdc4; }
+.big-btn.purple { background:#9b59b6; }
+.howto { background:#fff; border:3px solid #4ecdc4; border-radius:16px; padding:24px; margin-top:24px; text-align:left; }
+.howto h3 { color:#764ba2; margin-bottom:10px; }
+.howto p { color:#666; line-height:1.8; }
+.game { display:none; }
+.game.active { display:block; }
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+.header .title { font-size:34px; color:#764ba2; font-weight:bold; }
+.header .btns { display:flex; gap:10px; }
+button { background:#ff6b9d; color:#fff; border:none; padding:10px 20px; border-radius:14px; font-weight:bold; cursor:pointer; transition:.2s; }
+button:hover { background:#ff4d8f; }
+.snd { background:#4ecdc4; width:48px; height:48px; padding:0; font-size:20px; display:flex; align-items:center; justify-content:center; }
+.stats { display:flex; gap:18px; margin-bottom:18px; flex-wrap:wrap; }
+.stat { background:#fff; padding:14px 24px; border-radius:12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+.stat label { display:block; color:#666; font-size:12px; font-weight:bold; margin-bottom:4px; }
+.stat .v { font-size:26px; color:#764ba2; font-weight:bold; }
+.narr { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:18px; border-radius:14px; text-align:center; font-size:22px; font-weight:bold; margin-bottom:18px; }
+.area { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px; }
+.panel { background:#fff; border-radius:18px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.1); }
+.panel h2 { font-size:17px; color:#764ba2; margin-bottom:12px; }
+.board {
+  position:relative; border:4px dashed #ff6b9d; border-radius:12px; background:#f5f5f5;
+  margin:0 auto; overflow:hidden;
+}
+.tray { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; align-content:flex-start; min-height:300px; }
+.piece {
+  cursor:grab; user-select:none; touch-action:none; position:relative;
+  background-repeat:no-repeat; transition:filter .15s;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.35)); border-radius:4px;
+}
+.piece:hover { filter:drop-shadow(0 5px 9px rgba(0,0,0,.45)); }
+.piece.dragging { opacity:.85; z-index:5000; cursor:grabbing; }
+.slot { position:absolute; box-sizing:border-box; }
+.skip { width:100%; margin-top:8px; background:#9b59b6; }
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; align-items:center; justify-content:center; }
+.modal.show { display:flex; }
+.modal .box { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:40px; border-radius:28px; text-align:center; max-width:560px; animation:pop .4s; }
+@keyframes pop { from{transform:scale(.6);opacity:0;} to{transform:scale(1);opacity:1;} }
+.modal .pic { width:180px; height:180px; margin:16px auto; border-radius:14px; background-size:cover; border:4px solid #fff; }
+.modal .msg { font-size:30px; font-weight:bold; margin:16px 0; }
+.modal button { background:#ff6b9d; font-size:20px; padding:14px 38px; }
+@media(max-width:900px){ .area{grid-template-columns:1fr;} }
+@media(max-width:600px){
+  .header .title{font-size:26px;} .home h1{font-size:34px;}
+  .btn-row{flex-direction:column;} .big-btn{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="home active" id="home">
+    <h1>🧩 Puzzle Explorer</h1>
+    <div class="sub">Drag the pieces together to build the picture!</div>
+    <div class="btn-row">
+      <button class="big-btn" onclick="newGame()">Start New Game</button>
+      <button class="big-btn teal" onclick="continueGame()">Continue</button>
+    </div>
+    <div class="btn-row">
+      <button class="big-btn purple" onclick="restartGame()">🔄 Restart Game</button>
+    </div>
+    <div class="howto">
+      <h3>How to Play</h3>
+      <p>🧩 Each level shows one picture cut into jigsaw pieces.<br>
+         👉 Drag every piece from the right onto its matching spot on the board.<br>
+         🖼️ When all the slices join up, the full picture appears!<br>
+         ⭐ Level 1 has 4 pieces. Every level adds more.</p>
+    </div>
+  </div>
+
+  <div class="game" id="game">
+    <div class="header">
+      <div class="title">🧩 Puzzle Explorer</div>
+      <div class="btns">
+        <button class="snd" id="sndBtn" onclick="toggleSound()">🔊</button>
+        <button onclick="goHome()">Home</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><label>Level</label><div class="v" id="lvl">1</div></div>
+      <div class="stat"><label>Pieces Placed</label><div class="v"><span id="placed">0</span>/<span id="total">4</span></div></div>
+    </div>
+    <div class="narr" id="narr">Welcome, Puzzle Explorer!</div>
+    <div class="area">
+      <div class="panel">
+        <h2>Puzzle Board</h2>
+        <div class="board" id="board"></div>
+      </div>
+      <div class="panel">
+        <h2>Drag Pieces Here &rarr;</h2>
+        <div class="tray" id="tray"></div>
+      </div>
+    </div>
+    <button class="skip" onclick="skipLevel()">Skip Level</button>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="pic" id="modalPic"></div>
+      <div class="msg" id="modalMsg">Amazing!</div>
+      <button onclick="nextLevel()">Next Level &rarr;</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const Sound = {
+  on:true, ctx:null, gain:null,
+  init(){ const AC=window.AudioContext||window.webkitAudioContext; this.ctx=new AC(); this.gain=this.ctx.createGain(); this.gain.gain.value=.6; this.gain.connect(this.ctx.destination); },
+  beep(f,d){ if(!this.on||!this.ctx) return; const o=this.ctx.createOscillator(),g=this.ctx.createGain(); o.frequency.value=f; g.gain.setValueAtTime(.2,this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(.01,this.ctx.currentTime+d); o.connect(g); g.connect(this.gain); o.start(); o.stop(this.ctx.currentTime+d); },
+  snap(){ this.beep(700,.12); },
+  win(){ this.beep(523,.18); setTimeout(()=>this.beep(659,.18),140); setTimeout(()=>this.beep(784,.3),280); }
+};
+
+function art(name){
+  const bg = {
+    apple:'#FDE1E7', cow:'#DFF3E4', lion:'#FFF1D6', duck:'#DDEEFF', trex:'#E6F5DE',
+    banana:'#FFF9D6', penguin:'#E3F2FF', butterfly:'#FBE4FF', dino:'#EFE4FF', melon:'#E8FFE8'
+  }[name] || '#eee';
+  const inner = {
+    apple:'<path d="M150 95 C100 65 52 95 58 162 C64 232 112 268 150 268 C188 268 236 232 242 162 C248 95 200 65 150 95Z" fill="#E63946"/><path d="M150 95 C128 80 108 86 98 108 C116 100 136 100 150 110Z" fill="#FF8090" opacity=".6"/><rect x="144" y="56" width="11" height="44" rx="5" fill="#6B4226"/><path d="M156 64 C188 54 204 76 188 98 C162 98 156 80 156 64Z" fill="#52B788"/>',
+    cow:'<ellipse cx="150" cy="170" rx="95" ry="78" fill="#fff"/><ellipse cx="150" cy="170" rx="95" ry="78" fill="none" stroke="#333" stroke-width="3"/><path d="M95 120 q25 -20 45 5 q-20 25 -45 -5Z" fill="#333"/><path d="M180 200 q30 -15 40 15 q-25 20 -40 -15Z" fill="#333"/><ellipse cx="150" cy="215" rx="34" ry="24" fill="#FFC0CB"/><circle cx="138" cy="215" r="6" fill="#333"/><circle cx="162" cy="215" r="6" fill="#333"/><circle cx="125" cy="145" r="9" fill="#333"/><circle cx="175" cy="145" r="9" fill="#333"/><path d="M108 92 q-18 -22 6 -30 q14 18 -6 30Z" fill="#C8A165"/><path d="M192 92 q18 -22 -6 -30 q-14 18 6 30Z" fill="#C8A165"/>',
+    lion:'<circle cx="150" cy="150" r="100" fill="#C8741E"/><circle cx="150" cy="150" r="68" fill="#F4A340"/><circle cx="124" cy="138" r="9" fill="#333"/><circle cx="176" cy="138" r="9" fill="#333"/><path d="M150 150 l-14 22 h28Z" fill="#7A3B12"/><path d="M150 172 q-22 18 -40 6 M150 172 q22 18 40 6" stroke="#7A3B12" stroke-width="4" fill="none"/>',
+    duck:'<ellipse cx="148" cy="180" rx="78" ry="58" fill="#FFD83A"/><circle cx="200" cy="120" r="40" fill="#FFD83A"/><circle cx="210" cy="112" r="7" fill="#333"/><path d="M236 120 l34 -8 -2 20Z" fill="#FF8C2B"/><path d="M90 200 q-40 8 -20 36 q30 -6 30 -30Z" fill="#FFC107"/>',
+    trex:'<path d="M70 230 q-10 -120 90 -150 q70 -20 80 40 q-30 -10 -50 14 q40 6 30 40 q-30 4 -44 -14 q-4 60 -50 70 q10 28 -20 26 q4 -22 -10 -26 q-26 -2 -36 -10Z" fill="#5DAE3A"/><circle cx="190" cy="120" r="7" fill="#222"/><path d="M205 138 l24 -2" stroke="#222" stroke-width="3"/>',
+    banana:'<path d="M70 90 q10 130 150 120 q30 -4 10 -26 q-110 16 -130 -100 q-4 -14 -20 -10 q-12 4 -20 16Z" fill="#FFD93B"/><path d="M214 178 l24 8 -12 16Z" fill="#7A5B12"/><path d="M70 90 q-8 -16 6 -22" stroke="#7A5B12" stroke-width="6" fill="none"/>',
+    penguin:'<ellipse cx="150" cy="160" rx="72" ry="92" fill="#2B2B2B"/><ellipse cx="150" cy="172" rx="46" ry="72" fill="#fff"/><circle cx="130" cy="120" r="7" fill="#222"/><circle cx="170" cy="120" r="7" fill="#222"/><path d="M150 130 l-14 14 h28Z" fill="#FF8C2B"/><path d="M110 248 l30 6 M190 248 l-30 6" stroke="#FF8C2B" stroke-width="10" stroke-linecap="round"/>',
+    butterfly:'<ellipse cx="150" cy="150" rx="8" ry="60" fill="#4A2B6B"/><path d="M148 110 q-80 -70 -100 10 q-10 60 100 30Z" fill="#FF4FA3"/><path d="M152 110 q80 -70 100 10 q10 60 -100 30Z" fill="#C04FFF"/><path d="M148 150 q-70 10 -80 60 q40 40 80 -20Z" fill="#FF8FD0"/><path d="M152 150 q70 10 80 60 q-40 40 -80 -20Z" fill="#A98CFF"/><circle cx="138" cy="98" r="5" fill="#4A2B6B"/><circle cx="162" cy="98" r="5" fill="#4A2B6B"/>',
+    dino:'<ellipse cx="150" cy="190" rx="92" ry="56" fill="#9B6BD6"/><circle cx="78" cy="170" r="28" fill="#9B6BD6"/><circle cx="70" cy="164" r="5" fill="#222"/><path d="M110 150 l16 -34 18 34 16 -34 18 34 16 -34 18 34Z" fill="#6E3FB0"/><path d="M236 196 q34 -6 30 30 q-26 -4 -30 -30Z" fill="#9B6BD6"/>',
+    melon:'<path d="M40 150 a110 110 0 0 0 220 0Z" fill="#2FAE3A"/><path d="M52 150 a98 98 0 0 0 196 0Z" fill="#fff"/><path d="M62 150 a88 88 0 0 0 176 0Z" fill="#FF4B5C"/><circle cx="110" cy="178" r="5" fill="#222"/><circle cx="150" cy="196" r="5" fill="#222"/><circle cx="190" cy="178" r="5" fill="#222"/><circle cx="130" cy="172" r="5" fill="#222"/><circle cx="172" cy="172" r="5" fill="#222"/>'
+  }[name] || '';
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><rect width="300" height="300" fill="'+bg+'"/>'+inner+'</svg>';
+  return 'data:image/svg+xml;base64,' + btoa(svg);
+}
+
+const puzzles = [
+  { name:'Apple',       key:'apple',     msg:'Complete the apple puzzle!', cols:2, rows:2 },
+  { name:'Cow',         key:'cow',       msg:'Build the friendly cow!',    cols:2, rows:2 },
+  { name:'Lion',        key:'lion',      msg:'Roar! Build the lion!',      cols:3, rows:2 },
+  { name:'Duck',        key:'duck',      msg:'Quack! Build the duck!',     cols:3, rows:2 },
+  { name:'T-Rex',       key:'trex',      msg:'A wild T-Rex! Build it!',    cols:3, rows:3 },
+  { name:'Banana',      key:'banana',    msg:'Build the banana!',          cols:3, rows:3 },
+  { name:'Penguin',     key:'penguin',   msg:'Build the penguin!',         cols:4, rows:3 },
+  { name:'Butterfly',   key:'butterfly', msg:'Build the butterfly!',       cols:4, rows:3 },
+  { name:'Dino',        key:'dino',      msg:'Build the dinosaur!',        cols:4, rows:4 },
+  { name:'Watermelon',  key:'melon',     msg:'Build the watermelon!',      cols:4, rows:4 }
+];
+const winMsgs = ['Amazing! You finished the {n}!','Wow! Puzzle master!','Fantastic! The {n} is complete!','You did it! So clever!','Brilliant work!'];
+
+let state = { level:1, sound:true };
+
+function newGame(){ state.level=1; save(); enterGame(); }
+function continueGame(){ const s=localStorage.getItem('pe_state'); if(s) state=JSON.parse(s); enterGame(); }
+function restartGame(){ if(confirm('Restart the whole game from Level 1?')){ state={level:1,sound:Sound.on}; save(); enterGame(); } }
+function enterGame(){ document.getElementById('home').classList.remove('active'); document.getElementById('game').classList.add('active'); loadLevel(); }
+function goHome(){ save(); document.getElementById('game').classList.remove('active'); document.getElementById('home').classList.add('active'); }
+function save(){ localStorage.setItem('pe_state', JSON.stringify(state)); }
+
+let cur, placedCount, totalPieces;
+
+function loadLevel(){
+  cur = puzzles[state.level-1] || puzzles[0];
+  document.getElementById('lvl').textContent = state.level;
+  document.getElementById('narr').textContent = cur.msg;
+  totalPieces = cur.cols*cur.rows;
+  document.getElementById('total').textContent = totalPieces;
+  document.getElementById('placed').textContent = '0';
+  placedCount = 0;
+  buildBoard();
+}
+
+function buildBoard(){
+  const board = document.getElementById('board');
+  const tray  = document.getElementById('tray');
+  board.innerHTML = ''; tray.innerHTML = '';
+
+  const panelW = board.parentElement.clientWidth - 36;
+  const boardSize = Math.max(240, Math.min(panelW, 420));
+  board.style.width = boardSize+'px';
+  board.style.height = boardSize+'px';
+
+  const cols=cur.cols, rows=cur.rows;
+  const pw = boardSize/cols, ph = boardSize/rows;
+  const img = art(cur.key);
+
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const slot=document.createElement('div');
+      slot.className='slot';
+      slot.dataset.slot=r*cols+c;
+      slot.style.left=(c*pw)+'px';
+      slot.style.top=(r*ph)+'px';
+      slot.style.width=pw+'px';
+      slot.style.height=ph+'px';
+      slot.style.background='rgba(0,0,0,.04)';
+      slot.style.border='1px solid rgba(118,75,162,.25)';
+      board.appendChild(slot);
+    }
+  }
+
+  const order=[];
+  for(let i=0;i<cols*rows;i++) order.push(i);
+  shuffle(order);
+
+  order.forEach(idx=>{
+    const r=Math.floor(idx/cols), c=idx%cols;
+    const piece=document.createElement('div');
+    piece.className='piece';
+    piece.dataset.slot=idx;
+    piece.style.width=pw+'px';
+    piece.style.height=ph+'px';
+    piece.style.backgroundImage='url("'+img+'")';
+    piece.style.backgroundSize=(cols*pw)+'px '+(rows*ph)+'px';
+    piece.style.backgroundPosition=(-c*pw)+'px '+(-r*ph)+'px';
+    piece.draggable=true;
+
+    piece.addEventListener('dragstart',e=>{ drag=piece; piece.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    piece.addEventListener('dragend',()=>piece.classList.remove('dragging'));
+    piece.addEventListener('touchstart',e=>{ drag=piece; piece.classList.add('dragging'); e.preventDefault(); },{passive:false});
+    piece.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+    piece.addEventListener('touchend',e=>{
+      const t=e.changedTouches[0];
+      dropAt(t.clientX,t.clientY);
+      piece.classList.remove('dragging'); drag=null;
+    });
+
+    tray.appendChild(piece);
+  });
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } }
+
+let drag=null;
+
+function dropAt(clientX, clientY){
+  if(!drag) return;
+  const board=document.getElementById('board');
+  const slots=board.querySelectorAll('.slot');
+  let hit=null;
+  slots.forEach(s=>{
+    const r=s.getBoundingClientRect();
+    if(clientX>=r.left&&clientX<=r.right&&clientY>=r.top&&clientY<=r.bottom) hit=s;
+  });
+  if(hit && hit.dataset.slot===drag.dataset.slot && !hit.dataset.filled){
+    lockPiece(drag, hit);
+  }
+}
+
+function lockPiece(piece, slot){
+  Sound.snap();
+  slot.dataset.filled='true';
+  piece.draggable=false;
+  piece.style.position='absolute';
+  piece.style.left='0'; piece.style.top='0';
+  piece.style.width='100%'; piece.style.height='100%';
+  piece.style.cursor='default';
+  piece.style.filter='none';
+  piece.style.borderRadius='0';
+  const board=document.getElementById('board');
+  const cols=cur.cols, rows=cur.rows;
+  const bw=board.clientWidth, bh=board.clientHeight;
+  const idx=parseInt(piece.dataset.slot), c=idx%cols, r=Math.floor(idx/cols);
+  piece.style.backgroundSize=bw+'px '+bh+'px';
+  piece.style.backgroundPosition=(-c*(bw/cols))+'px '+(-r*(bh/rows))+'px';
+  slot.appendChild(piece);
+  slot.style.border='none'; slot.style.background='none';
+
+  placedCount++;
+  document.getElementById('placed').textContent=placedCount;
+  if(placedCount===totalPieces){ setTimeout(function(){ Sound.win(); win(); },300); }
+}
+
+document.addEventListener('dragover',e=>{ e.preventDefault(); e.dataTransfer.dropEffect='move'; });
+document.addEventListener('drop',e=>{ e.preventDefault(); dropAt(e.clientX,e.clientY); });
+
+function win(){
+  const m=winMsgs[Math.floor(Math.random()*winMsgs.length)].replace('{n}',cur.name);
+  document.getElementById('modalMsg').textContent=m;
+  document.getElementById('modalPic').style.backgroundImage='url("'+art(cur.key)+'")';
+  document.getElementById('modal').classList.add('show');
+}
+function nextLevel(){
+  document.getElementById('modal').classList.remove('show');
+  state.level++; if(state.level>puzzles.length) state.level=puzzles.length;
+  save(); loadLevel();
+}
+function skipLevel(){ if(confirm('Skip this level?')) nextLevel(); }
+
+function toggleSound(){ Sound.on=!Sound.on; state.sound=Sound.on; save(); document.getElementById('sndBtn').textContent=Sound.on?'🔊':'🔇'; }
+
+window.addEventListener('load',function(){
+  Sound.init();
+  const s=localStorage.getItem('pe_state');
+  if(s){ state=JSON.parse(s); Sound.on=state.sound; document.getElementById('sndBtn').textContent=Sound.on?'🔊':'🔇'; }
+});
+</script>
+</body>
+</html>
