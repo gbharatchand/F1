@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Responsive + disable double-tap zoom on iOS/Android -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Tiny Piano Adventure</title>
+<style>
+/* ============================================================
+   TINY PIANO ADVENTURE
+   Single-file game for 4-year-olds.
+   Sections: 1) Theme vars  2) Layout  3) Keys  4) UI  5) FX
+   ============================================================ */
+
+/* ---------- 1. THEME / COLORS ---------- */
+:root{
+  --sky:        #8fd3ff;   /* sky blue   */
+  --sky-deep:   #6cbef0;
+  --grass:      #b6f0a8;   /* light green*/
+  --sun:        #ffe27a;   /* yellow     */
+  --pink:       #ffb3d1;   /* pink       */
+  --purple:     #c9b0ff;   /* purple     */
+  --orange:     #ffc491;   /* soft orange*/
+  --ink:        #4a3b6b;   /* soft dark text, never black */
+  --card:       #ffffff;
+  --radius:     28px;
+  --shadow:     0 8px 0 rgba(74,59,107,.18), 0 14px 30px rgba(74,59,107,.18);
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html,body{
+  height:100%;
+  margin:0;
+  /* System font stack only - no external fonts allowed */
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Comic Sans MS",
+              "Trebuchet MS",Verdana,sans-serif;
+  color:var(--ink);
+  /* Kill 300ms delay + double-tap zoom everywhere */
+  touch-action:manipulation;
+  -webkit-user-select:none; user-select:none;
+  overflow:hidden;
+}
+
+body{
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--sky) 0%, var(--sky-deep) 55%, #a8def5 100%);
+}
+
+/* ---------- 2. LAYOUT ---------- */
+#app{
+  position:fixed; inset:0;
+  display:flex; flex-direction:column;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right)
+          env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* soft rolling hills at the bottom for atmosphere */
+.hills{ position:fixed; left:0; right:0; bottom:0; height:32vh; z-index:0; pointer-events:none; }
+
+header{
+  position:relative; z-index:2;
+  text-align:center;
+  padding:8px 12px 2px;
+}
+h1{
+  margin:0;
+  font-size:clamp(20px,5vw,38px);
+  letter-spacing:.5px;
+  color:#fff;
+  text-shadow:0 3px 0 var(--purple), 0 6px 14px rgba(74,59,107,.25);
+}
+
+/* Top bar: mode switch + mute */
+#bar{
+  position:relative; z-index:2;
+  display:flex; gap:8px; justify-content:center; align-items:center;
+  flex-wrap:wrap;
+  padding:6px 10px 4px;
+}
+.mode-btn{
+  border:none; cursor:pointer;
+  font-family:inherit; font-weight:800;
+  font-size:clamp(13px,3.4vw,18px);
+  color:var(--ink);
+  padding:12px 16px; min-height:52px;
+  border-radius:var(--radius);
+  background:var(--card);
+  box-shadow:0 5px 0 rgba(74,59,107,.18);
+  transition:transform .12s ease, background .2s ease, box-shadow .12s ease;
+}
+.mode-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(74,59,107,.18); }
+.mode-btn.active{ background:var(--sun); transform:translateY(2px); }
+
+.icon-btn{
+  border:none; cursor:pointer; background:var(--card);
+  width:52px; height:52px; min-width:52px; border-radius:50%;
+  font-size:24px; box-shadow:0 5px 0 rgba(74,59,107,.18);
+}
+.icon-btn:active{ transform:translateY(3px); }
+
+/* Stage holds message + cards + keys */
+#stage{
+  position:relative; z-index:2;
+  flex:1;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-end;
+  min-height:0;
+}
+
+/* Big friendly message line */
+#message{
+  min-height:1.4em;
+  font-size:clamp(20px,5.5vw,36px);
+  font-weight:900;
+  color:#fff;
+  text-shadow:0 3px 0 var(--pink), 0 5px 12px rgba(74,59,107,.25);
+  text-align:center; padding:2px 10px;
+  transition:transform .15s ease;
+}
+#message.pop{ animation:popmsg .4s ease; }
+@keyframes popmsg{ 0%{transform:scale(.6)} 60%{transform:scale(1.15)} 100%{transform:scale(1)} }
+
+/* ---------- SONG PICKER ---------- */
+#songPicker{
+  position:relative; z-index:2;
+  display:none;                 /* shown only in song mode */
+  flex-wrap:wrap; gap:10px; justify-content:center;
+  align-content:center;
+  padding:10px clamp(8px,4vw,30px);
+  max-width:760px; margin:0 auto;
+}
+.song-btn{
+  border:none; cursor:pointer; font-family:inherit; font-weight:800;
+  font-size:clamp(15px,3.8vw,20px); color:var(--ink);
+  background:var(--card); padding:16px 18px; min-height:64px;
+  border-radius:24px; box-shadow:0 6px 0 rgba(74,59,107,.18);
+  display:flex; align-items:center; gap:10px;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.song-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 rgba(74,59,107,.18); }
+.song-btn .emo{ font-size:1.5em; }
+#songPicker .pick-title{
+  width:100%; text-align:center; color:#fff; font-weight:900;
+  font-size:clamp(18px,5vw,28px); text-shadow:0 3px 0 var(--purple);
+  margin-bottom:2px;
+}
+#backBtn{ display:none; }   /* a small "choose another song" button in song mode */
+#backBtn.show{ display:inline-flex; }
+
+/* Pattern cards (Copy mode) */
+#cards{
+  display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+  min-height:0; margin:4px 0;
+}
+.note-card{
+  width:clamp(40px,9.5vw,60px); height:clamp(40px,9.5vw,60px);
+  border-radius:16px; display:flex; align-items:center; justify-content:center;
+  font-size:clamp(18px,4.5vw,26px); font-weight:900; color:#fff;
+  box-shadow:var(--shadow); opacity:.4; transform:scale(.85);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.note-card.show{ opacity:1; transform:scale(1.08); }
+
+/* ---------- 3. KEYS ---------- */
+#piano{
+  width:100%;
+  max-width:900px;
+  display:flex; gap:clamp(4px,1.1vw,10px);
+  justify-content:center; align-items:flex-end;
+  padding:10px clamp(6px,2vw,18px) 16px;
+}
+.key{
+  flex:1 1 0;
+  max-width:110px;
+  height:clamp(110px,28vh,250px);
+  min-height:64px;            /* large hit target */
+  border:none; cursor:pointer;
+  border-radius:16px 16px 24px 24px;
+  position:relative;
+  box-shadow:var(--shadow);
+  transition:transform .08s ease, filter .15s ease, box-shadow .08s ease;
+  display:flex; align-items:flex-end; justify-content:center;
+  padding-bottom:12px;
+  font-size:clamp(18px,4vw,30px); font-weight:900; color:#fff;
+  text-shadow:0 2px 3px rgba(0,0,0,.18);
+}
+/* fixed bright-but-soft color per key (one full octave: C D E F G A B C) */
+.key[data-note="C4"]{ background:linear-gradient(#ff9fc4,#ff7fb0); }              /* pink   */
+.key[data-note="D4"]{ background:linear-gradient(#ffce7a,#ffb84d); }              /* orange */
+.key[data-note="E4"]{ background:linear-gradient(#fff07a,#ffe04d); color:var(--ink); text-shadow:none;} /* yellow */
+.key[data-note="F4"]{ background:linear-gradient(#bff0a0,#9fe07a); }              /* green  */
+.key[data-note="G4"]{ background:linear-gradient(#a9d8ff,#82c2ff); }              /* blue   */
+.key[data-note="A4"]{ background:linear-gradient(#d6bcff,#bd9bff); }              /* purple */
+.key[data-note="B4"]{ background:linear-gradient(#ffc0a3,#ff9e78); }             /* peach  */
+.key[data-note="C5"]{ background:linear-gradient(#ff9fd6,#ff79bf); }             /* magenta*/
+
+.key:active,
+.key.down{ transform:translateY(6px) scale(.97); box-shadow:0 3px 0 rgba(74,59,107,.18); }
+.key.lit{ animation:bounce .45s ease; filter:brightness(1.18); }
+@keyframes bounce{
+  0%{transform:translateY(0)}
+  35%{transform:translateY(-16px) scale(1.04)}
+  70%{transform:translateY(4px) scale(.98)}
+  100%{transform:translateY(0) scale(1)}
+}
+/* glowing ring when this is the key to press in Song mode */
+.key.target{ animation:glow 1s ease-in-out infinite; }
+@keyframes glow{
+  0%,100%{ box-shadow:var(--shadow); filter:brightness(1); }
+  50%{ box-shadow:0 0 0 6px rgba(255,255,255,.9), var(--shadow); filter:brightness(1.3); }
+}
+
+/* ---------- 4. START GATE ---------- */
+#gate{
+  position:fixed; inset:0; z-index:50;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:radial-gradient(120% 90% at 50% 20%, var(--purple), var(--sky-deep));
+  text-align:center; gap:24px; padding:24px;
+}
+#gate h2{ color:#fff; font-size:clamp(26px,7vw,48px); margin:0;
+          text-shadow:0 4px 0 var(--pink); }
+/* friendly piano mascot drawn in inline SVG - no image files, no emoji */
+.gate-art{ width:clamp(140px,34vw,220px); height:auto; animation:float 3s ease-in-out infinite; }
+@keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+#startBtn{
+  border:none; cursor:pointer; font-family:inherit; font-weight:900;
+  font-size:clamp(22px,6vw,34px); color:var(--ink);
+  background:var(--sun); padding:22px 40px; min-height:72px;
+  border-radius:40px; box-shadow:0 8px 0 rgba(74,59,107,.3);
+  animation:wiggle 1.6s ease-in-out infinite;
+}
+#startBtn:active{ transform:translateY(5px); box-shadow:0 3px 0 rgba(74,59,107,.3); }
+@keyframes wiggle{ 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+
+/* ---------- 5. FX (confetti / balloons / sparkles) ---------- */
+#fx{ position:fixed; inset:0; z-index:40; pointer-events:none; overflow:hidden; }
+.confetti{ position:absolute; width:14px; height:14px; border-radius:3px;
+           top:-20px; animation:fall linear forwards; }
+@keyframes fall{
+  0%{ transform:translateY(0) rotate(0); opacity:1; }
+  100%{ transform:translateY(110vh) rotate(720deg); opacity:1; }
+}
+.balloon{ position:absolute; bottom:-120px; font-size:54px;
+          animation:rise ease-in forwards; }
+@keyframes rise{
+  0%{ transform:translateY(0) translateX(0); opacity:1; }
+  100%{ transform:translateY(-120vh) translateX(var(--drift,0)); opacity:1; }
+}
+.sparkle{ position:absolute; font-size:26px; animation:spark .8s ease-out forwards; }
+@keyframes spark{
+  0%{ transform:scale(.2) rotate(0); opacity:1; }
+  100%{ transform:scale(1.6) rotate(60deg); opacity:0; }
+}
+
+/* landscape: keep everything visible */
+@media (orientation:landscape) and (max-height:560px){
+  header{ padding-top:2px; } h1{ font-size:clamp(16px,3.5vw,26px); }
+  .key{ height:clamp(80px,42vh,190px); }
+  #message{ font-size:clamp(15px,4vw,24px); min-height:1.2em; }
+  .song-btn{ min-height:54px; padding:10px 14px; font-size:15px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== START GATE: audio must begin on a user gesture ===== -->
+<div id="gate">
+  <!-- inline SVG piano mascot (smiling keyboard), no image files, no emoji -->
+  <svg class="gate-art" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="20" y="40" width="160" height="90" rx="18" fill="#fff" stroke="#c9b0ff" stroke-width="6"/>
+    <!-- little piano keys -->
+    <rect x="34" y="92" width="20" height="30" rx="5" fill="#ff7fb0"/>
+    <rect x="58" y="92" width="20" height="30" rx="5" fill="#ffb84d"/>
+    <rect x="82" y="92" width="20" height="30" rx="5" fill="#ffe04d"/>
+    <rect x="106" y="92" width="20" height="30" rx="5" fill="#9fe07a"/>
+    <rect x="130" y="92" width="20" height="30" rx="5" fill="#82c2ff"/>
+    <rect x="154" y="92" width="14" height="30" rx="5" fill="#bd9bff"/>
+    <!-- smiley face -->
+    <circle cx="78" cy="64" r="7" fill="#4a3b6b"/>
+    <circle cx="122" cy="64" r="7" fill="#4a3b6b"/>
+    <circle cx="80" cy="62" r="2" fill="#fff"/>
+    <circle cx="124" cy="62" r="2" fill="#fff"/>
+    <path d="M82 78 Q100 92 118 78" stroke="#4a3b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="62" cy="74" r="6" fill="#ffb3d1"/>
+    <circle cx="138" cy="74" r="6" fill="#ffb3d1"/>
+    <!-- music notes floating -->
+    <text x="6" y="34" font-size="22" fill="#fff">&#9834;</text>
+    <text x="176" y="30" font-size="26" fill="#fff">&#9835;</text>
+  </svg>
+  <h2>Tiny Piano Adventure</h2>
+  <button id="startBtn">&#9654; Tap to Start</button>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="app">
+  <!-- gentle hills background -->
+  <svg class="hills" viewBox="0 0 1000 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M0 180 Q250 90 500 170 T1000 150 V320 H0 Z" fill="#b6f0a8"/>
+    <path d="M0 230 Q300 150 600 220 T1000 210 V320 H0 Z" fill="#9fe88c"/>
+  </svg>
+
+  <header><h1>Tiny Piano Adventure</h1></header>
+
+  <!-- mode switcher + mute always visible -->
+  <div id="bar">
+    <button class="mode-btn active" data-mode="free">&#127929; Free Play</button>
+    <button class="mode-btn" data-mode="copy">&#9999;&#65039; Copy Notes</button>
+    <button class="mode-btn" data-mode="song">&#127925; Play a Song</button>
+    <button id="muteBtn" class="icon-btn" aria-label="Mute">&#128266;</button>
+    <button id="restartBtn" class="icon-btn" aria-label="Start over">&#128260;</button>
+  </div>
+
+  <div id="stage">
+    <div id="message">Tap the colorful keys!</div>
+
+    <!-- song picker (only visible in Play a Song mode) -->
+    <div id="songPicker"></div>
+
+    <!-- pattern cards used by Copy mode -->
+    <div id="cards" aria-hidden="true"></div>
+
+    <!-- the piano: one full octave C D E F G A B C -->
+    <div id="piano">
+      <button class="key" data-note="C4">C</button>
+      <button class="key" data-note="D4">D</button>
+      <button class="key" data-note="E4">E</button>
+      <button class="key" data-note="F4">F</button>
+      <button class="key" data-note="G4">G</button>
+      <button class="key" data-note="A4">A</button>
+      <button class="key" data-note="B4">B</button>
+      <button class="key" data-note="C5">C</button>
+    </div>
+  </div>
+</div>
+
+<!-- celebration layer -->
+<div id="fx"></div>
+
+<script>
+/* ============================================================
+   GAME DATA  (a non-coder can edit everything in this block)
+   ============================================================ */
+
+// ---- NOTES: name -> frequency in Hz.  ADD NEW NOTES HERE ----
+// One full octave so real nursery rhymes can be played.
+const NOTES = {
+  "C4": 261.63,
+  "D4": 293.66,
+  "E4": 329.63,
+  "F4": 349.23,
+  "G4": 392.00,
+  "A4": 440.00,
+  "B4": 493.88,
+  "C5": 523.25
+};
+
+// ---- COPY-THE-NOTES LEVELS ----
+// Each level is a list of note names. The game flashes the pattern,
+// the child copies it by tapping the same keys.
+// They go easiest first and slowly get longer / more varied.
+// ADD NEW LEVELS by adding more arrays anywhere in this list.
+const COPY_LEVELS = [
+  ["C4"],
+  ["G4"],
+  ["C4","D4"],
+  ["E4","G4"],
+  ["C4","E4","G4"],
+  ["G4","E4","C4"],
+  ["C4","D4","E4"],
+  ["E4","F4","G4"],
+  ["C4","E4","G4","E4"],
+  ["G4","F4","E4","D4"],
+  ["C4","D4","E4","F4","G4"],
+  ["C4","C4","G4","G4"],
+  ["E4","D4","C4","D4","E4"],
+  ["G4","A4","B4","C5"]
+];
+
+// ---- SONGS: name -> { emoji label, note sequence }.
+// Each note is highlighted one at a time for the child to tap.
+// ADD NEW SONGS by adding another entry here. Use only notes that
+// exist in NOTES above (C4 D4 E4 F4 G4 A4 B4 C5).
+const SONGS = {
+  "Twinkle Twinkle": {
+    emo: "\u2B50",
+    notes: ["C4","C4","G4","G4","A4","A4","G4",
+            "F4","F4","E4","E4","D4","D4","C4"]
+  },
+  "Baa Baa Black Sheep": {  // same tune as Twinkle
+    emo: "\uD83D\uDC11",
+    notes: ["C4","C4","G4","G4","A4","A4","G4",
+            "F4","F4","E4","E4","D4","D4","C4"]
+  },
+  "Mary Had a Little Lamb": {
+    emo: "\uD83D\uDC11",
+    notes: ["E4","D4","C4","D4","E4","E4","E4",
+            "D4","D4","D4","E4","G4","G4"]
+  },
+  "Hot Cross Buns": {
+    emo: "\uD83E\uDD50",
+    notes: ["E4","D4","C4","E4","D4","C4",
+            "C4","C4","C4","C4","D4","D4","D4","D4",
+            "E4","D4","C4"]
+  },
+  "Row Row Your Boat": {
+    emo: "\uD83D\uDEA3",
+    notes: ["C4","C4","C4","D4","E4",
+            "E4","D4","E4","F4","G4"]
+  },
+  "Old MacDonald": {
+    emo: "\uD83D\uDC2E",
+    notes: ["G4","G4","G4","D4","E4","E4","D4",
+            "B4","B4","A4","A4","G4"]
+  },
+  "London Bridge": {
+    emo: "\uD83C\uDF09",
+    notes: ["G4","A4","G4","F4","E4","F4","G4",
+            "D4","E4","F4","E4","F4","G4"]
+  }
+};
+
+/* ============================================================
+   AUDIO ENGINE  (Web Audio API, oscillators only)
+   ============================================================ */
+let audioCtx = null;
+let muted = false;
+
+// Create the single shared AudioContext (called from the start gate).
+function initAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AC();
+  }
+  if(audioCtx.state === "suspended") audioCtx.resume();
+}
+
+// Play one note with a soft attack/decay envelope so there are no clicks.
+function playTone(freq, duration = 0.6, type = "triangle", volume = 0.25){
+  if(!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  // envelope: quick attack -> smooth decay
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + duration + 0.05);
+}
+
+// Play a note by its name.
+function playNote(name){ if(NOTES[name]) playTone(NOTES[name]); }
+
+// Soft little confirmation blip on any tap.
+function tapSound(){ playTone(660, 0.12, "sine", 0.12); }
+
+// Happy rising arpeggio for success.
+function successSound(){
+  [523.25, 659.25, 783.99, 1046.5].forEach((f,i)=>{
+    setTimeout(()=>playTone(f, 0.35, "triangle", 0.22), i*110);
+  });
+}
+
+// Gentle "try again" - two soft notes, never scary or harsh.
+function tryAgainSound(){
+  playTone(392, 0.18, "sine", 0.16);
+  setTimeout(()=>playTone(330, 0.22, "sine", 0.16), 150);
+}
+
+/* ============================================================
+   ELEMENTS + HELPERS
+   ============================================================ */
+const keys       = Array.from(document.querySelectorAll(".key"));
+const messageEl  = document.getElementById("message");
+const cardsEl    = document.getElementById("cards");
+const pickerEl   = document.getElementById("songPicker");
+const fxEl       = document.getElementById("fx");
+
+const KEY_COLORS = { // matches the CSS, used for cards + confetti
+  "C4":"#ff7fb0","D4":"#ffb84d","E4":"#ffe04d","F4":"#9fe07a",
+  "G4":"#82c2ff","A4":"#bd9bff","B4":"#ff9e78","C5":"#ff79bf"
+};
+const PRAISE = ["Great job!","Awesome!","Yay!","You did it!","Wonderful!","Super!"];
+function randomPraise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)]; }
+
+function keyEl(name){ return keys.find(k => k.dataset.note === name); }
+
+function showMessage(text){
+  messageEl.textContent = text;
+  messageEl.classList.remove("pop"); void messageEl.offsetWidth; // restart anim
+  messageEl.classList.add("pop");
+}
+
+// Visual press feedback on a key (light + bounce + sparkle).
+function flashKey(name){
+  const el = keyEl(name); if(!el) return;
+  el.classList.remove("lit"); void el.offsetWidth;
+  el.classList.add("lit");
+  sparkleAt(el);
+  setTimeout(()=>el.classList.remove("lit"), 450);
+}
+
+/* ============================================================
+   CELEBRATION FX
+   ============================================================ */
+function sparkleAt(el){
+  const r = el.getBoundingClientRect();
+  const marks = ["\u2728","\u2B50","\uD83C\uDF1F"];
+  for(let i=0;i<3;i++){
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.textContent = marks[i%marks.length];
+    s.style.left = (r.left + Math.random()*r.width) + "px";
+    s.style.top  = (r.top + Math.random()*r.height*0.5) + "px";
+    fxEl.appendChild(s);
+    setTimeout(()=>s.remove(), 800);
+  }
+}
+
+function confettiBurst(){
+  const colors = Object.values(KEY_COLORS);
+  for(let i=0;i<60;i++){
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random()*100 + "vw";
+    c.style.background = colors[i%colors.length];
+    c.style.animationDuration = (1.6 + Math.random()*1.4) + "s";
+    c.style.animationDelay = (Math.random()*0.4) + "s";
+    fxEl.appendChild(c);
+    setTimeout(()=>c.remove(), 3500);
+  }
+}
+
+function balloonRise(){
+  const balloons = ["\uD83C\uDF88","\uD83C\uDF88","\uD83C\uDF88","\uD83C\uDF1F","\u2B50","\uD83C\uDF88"];
+  for(let i=0;i<14;i++){
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.textContent = balloons[i%balloons.length];
+    b.style.left = Math.random()*92 + "vw";
+    b.style.setProperty("--drift", (Math.random()*80-40)+"px");
+    b.style.animationDuration = (2.6 + Math.random()*1.8) + "s";
+    b.style.animationDelay = (Math.random()*0.6) + "s";
+    fxEl.appendChild(b);
+    setTimeout(()=>b.remove(), 5200);
+  }
+}
+
+/* ============================================================
+   MODE STATE MACHINE
+   ============================================================ */
+let mode = "free";          // "free" | "copy" | "song"
+let busy = false;           // true while the game is playing a demo pattern
+
+// CONFIG knobs (toddler-friendly pacing)
+const CARD_GAP    = 700;    // ms between demo notes
+const NOTE_LEN_MS = 600;    // how long each demo note rings
+
+// ----- COPY MODE state -----
+let copyLevel = 0;          // index into COPY_LEVELS
+let copyInput = [];         // child's taps so far
+
+// ----- SONG MODE state -----
+let currentSong = null;     // name of chosen song, or null = picker showing
+let songStep = 0;           // which note of the song we're waiting for
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function clearCards(){ cardsEl.innerHTML=""; }
+function clearTargets(){ keys.forEach(k=>k.classList.remove("target")); }
+
+// Build a visual card for each note in a sequence (used in Copy mode).
+function buildCards(seq){
+  clearCards();
+  seq.forEach(n=>{
+    const card = document.createElement("div");
+    card.className = "note-card";
+    card.textContent = n[0];           // just the letter, e.g. "C"
+    card.style.background = KEY_COLORS[n];
+    card.dataset.note = n;
+    cardsEl.appendChild(card);
+  });
+}
+
+/* ---------- Switch modes ---------- */
+function setMode(newMode){
+  mode = newMode;
+  busy = false;
+  copyInput = [];
+  currentSong = null;
+  clearCards();
+  clearTargets();
+  pickerEl.style.display = "none";
+
+  document.querySelectorAll(".mode-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.mode === newMode);
+  });
+
+  if(mode === "free"){
+    showMessage("Tap the colorful keys!");
+  } else if(mode === "copy"){
+    copyLevel = 0;
+    showMessage("Listen, then copy me!");
+    setTimeout(playCopyPattern, 700);
+  } else if(mode === "song"){
+    showSongPicker();
+  }
+}
+
+/* ============================================================
+   FREE PLAY
+   ============================================================ */
+function freePlayTap(name){
+  playNote(name);
+  flashKey(name);
+  showMessage(name[0]);     // big single letter
+}
+
+/* ============================================================
+   COPY THE NOTES
+   ============================================================ */
+async function playCopyPattern(){
+  if(mode !== "copy") return;
+  busy = true;
+  copyInput = [];
+  const seq = COPY_LEVELS[copyLevel];
+  buildCards(seq);
+  showMessage("My turn!");
+  await sleep(500);
+
+  for(let i=0;i<seq.length;i++){
+    if(mode !== "copy") return;        // bail if user switched modes
+    const card = cardsEl.children[i];
+    card.classList.add("show");
+    playNote(seq[i]);
+    flashKey(seq[i]);
+    await sleep(NOTE_LEN_MS);
+    card.classList.remove("show");
+    await sleep(CARD_GAP - NOTE_LEN_MS);
+  }
+  showMessage("Now you!");
+  busy = false;
+}
+
+function copyTap(name){
+  if(busy) return;                     // ignore taps during the demo
+  playNote(name);
+  flashKey(name);
+
+  const seq = COPY_LEVELS[copyLevel];
+  copyInput.push(name);
+  const idx = copyInput.length - 1;
+
+  // light the matching card as the child plays
+  if(cardsEl.children[idx]) cardsEl.children[idx].classList.add("show");
+
+  // wrong note? no penalty: gentle sound, replay pattern
+  if(name !== seq[idx]){
+    showMessage("Try again!");
+    tryAgainSound();
+    copyInput = [];
+    setTimeout(playCopyPattern, 900);
+    return;
+  }
+
+  // completed the full sequence correctly?
+  if(copyInput.length === seq.length){
+    busy = true;
+    showMessage(randomPraise());
+    successSound();
+    confettiBurst();
+    copyLevel++;
+    if(copyLevel >= COPY_LEVELS.length){
+      // finished all levels -> big party, then loop from start
+      setTimeout(()=>{
+        showMessage("You are a star!");
+        balloonRise();
+      }, 600);
+      copyLevel = 0;
+    }
+    setTimeout(playCopyPattern, 1800);
+  }
+}
+
+/* ============================================================
+   PLAY A SONG
+   ============================================================ */
+
+// Build the grid of song choices.
+function showSongPicker(){
+  currentSong = null;
+  clearTargets();
+  clearCards();
+  showMessage("Pick a song!");
+  pickerEl.style.display = "flex";
+  pickerEl.innerHTML = '<div class="pick-title">Which song?</div>';
+
+  Object.keys(SONGS).forEach(name=>{
+    const btn = document.createElement("button");
+    btn.className = "song-btn";
+    btn.innerHTML = '<span class="emo">'+SONGS[name].emo+'</span>'+name;
+    btn.addEventListener("click", ()=>{ tapSound(); chooseSong(name); });
+    pickerEl.appendChild(btn);
+  });
+}
+
+// Start playing the chosen song.
+function chooseSong(name){
+  currentSong = name;
+  songStep = 0;
+  pickerEl.style.display = "none";
+  showMessage("Tap the glowing key!");
+  highlightSongKey();
+}
+
+function highlightSongKey(){
+  clearTargets();
+  const seq = SONGS[currentSong].notes;
+  if(songStep < seq.length){
+    const el = keyEl(seq[songStep]);
+    if(el) el.classList.add("target");
+  }
+}
+
+function songTap(name){
+  if(!currentSong) return;             // still on the picker screen
+  const seq = SONGS[currentSong].notes;
+  const want = seq[songStep];
+
+  // wrong key: ignore quietly (do not advance, no scary sound)
+  if(name !== want) return;
+
+  // correct
+  playNote(name);
+  flashKey(name);
+  songStep++;
+
+  if(songStep >= seq.length){
+    // finished the whole song!
+    clearTargets();
+    showMessage("You played a song!");
+    successSound();
+    confettiBurst();
+    balloonRise();
+    // after the party, return to the song picker to choose again
+    setTimeout(()=>{ if(mode === "song") showSongPicker(); }, 2800);
+  } else {
+    highlightSongKey();
+  }
+}
+
+/* ============================================================
+   INPUT ROUTING  (touch + click, no double-fire)
+   ============================================================ */
+function handleKeyPress(name){
+  if(mode === "free")      freePlayTap(name);
+  else if(mode === "copy") copyTap(name);
+  else if(mode === "song") songTap(name);
+}
+
+// Attach both touchstart (preventDefault) and click; guard against double-fire.
+keys.forEach(k=>{
+  let touched = false;
+  k.addEventListener("touchstart", e=>{
+    e.preventDefault();              // stop 300ms delay + synthetic click
+    touched = true;
+    k.classList.add("down");
+    handleKeyPress(k.dataset.note);
+  }, {passive:false});
+  k.addEventListener("touchend", ()=> k.classList.remove("down"));
+  k.addEventListener("click", ()=>{
+    if(touched){ touched=false; return; }  // touch already handled it
+    handleKeyPress(k.dataset.note);
+  });
+});
+
+// Optional keyboard support (desktop): C D E F G A B and C again.
+const KEYBOARD = {c:"C4", d:"D4", e:"E4", f:"F4", g:"G4", a:"A4", b:"B4"};
+document.addEventListener("keydown", e=>{
+  const n = KEYBOARD[e.key.toLowerCase()];
+  if(n && audioCtx){ handleKeyPress(n); }
+});
+
+/* ---------- mode buttons ---------- */
+document.querySelectorAll(".mode-btn").forEach(b=>{
+  b.addEventListener("click", ()=>{ tapSound(); setMode(b.dataset.mode); });
+});
+
+/* ---------- mute ---------- */
+const muteBtn = document.getElementById("muteBtn");
+muteBtn.addEventListener("click", ()=>{
+  muted = !muted;
+  muteBtn.textContent = muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+  if(!muted) tapSound();
+});
+
+/* ---------- restart current mode ---------- */
+document.getElementById("restartBtn").addEventListener("click", ()=>{
+  tapSound();
+  setMode(mode);
+});
+
+/* ============================================================
+   START GATE  (unlocks audio on first gesture)
+   ============================================================ */
+const gate = document.getElementById("gate");
+function start(){
+  initAudio();
+  gate.style.display = "none";
+  setMode("free");
+  tapSound();
+}
+document.getElementById("startBtn").addEventListener("click", start);
+document.getElementById("startBtn").addEventListener("touchstart", e=>{
+  e.preventDefault(); start();
+}, {passive:false});
+</script>
+</body>
+</html>
