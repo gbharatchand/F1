@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Flag Balloon Pop</title>
+<style>
+/* ============================================================
+   FLAG BALLOON POP - styles
+   Bright, soft, toddler-friendly. Big targets. No dark themes.
+   ============================================================ */
+
+:root{
+  --sky1:#8fd3ff;       /* sky blue */
+  --sky2:#bfe9ff;
+  --orange:#ffb056;     /* soft orange */
+  --green:#9be564;      /* light green */
+  --yellow:#ffe066;     /* yellow */
+  --pink:#ff9fc7;       /* pink */
+  --purple:#c79bff;     /* purple */
+  --ink:#3a2e5c;        /* friendly dark text, not black */
+  --card:#fffdf7;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+html,body{
+  margin:0;padding:0;height:100%;width:100%;
+  overflow:hidden;
+  font-family:"Comic Sans MS","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 55%,#d6f5c9 100%);
+  color:var(--ink);
+  -webkit-user-select:none;user-select:none;
+  touch-action:manipulation;
+}
+
+#app{position:fixed;inset:0;overflow:hidden;}
+
+/* floating background clouds */
+.cloud{
+  position:absolute;font-size:5rem;opacity:.85;pointer-events:none;
+  animation:drift 30s linear infinite;
+}
+@keyframes drift{
+  from{transform:translateX(-20vw);}
+  to{transform:translateX(120vw);}
+}
+
+/* ---------- generic big button ---------- */
+.bigbtn{
+  border:none;cursor:pointer;
+  font-family:inherit;font-weight:800;
+  color:var(--ink);
+  border-radius:30px;
+  padding:18px 34px;
+  font-size:clamp(1.1rem,4.5vw,1.8rem);
+  box-shadow:0 8px 0 rgba(0,0,0,.15),0 12px 22px rgba(0,0,0,.18);
+  transition:transform .12s ease,box-shadow .12s ease;
+  margin:10px;
+}
+.bigbtn:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.15);}
+.bigbtn.green{background:var(--green);}
+.bigbtn.orange{background:var(--orange);}
+.bigbtn.yellow{background:var(--yellow);}
+.bigbtn.pink{background:var(--pink);}
+.bigbtn.purple{background:var(--purple);}
+
+/* ---------- screens ---------- */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:20px;
+  transition:opacity .4s ease;
+}
+.hidden{display:none !important;}
+
+/* title */
+.title{
+  font-size:clamp(2.2rem,11vw,5rem);
+  line-height:1;margin:0 0 10px;
+  color:#fff;
+  text-shadow:0 4px 0 var(--orange),0 8px 18px rgba(0,0,0,.25);
+  animation:bob 2.4s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-12px) rotate(1deg);}}
+
+.subtitle{font-size:clamp(1rem,4.5vw,1.6rem);margin:0 0 22px;color:var(--ink);}
+
+/* mascot */
+.mascot{
+  font-size:clamp(4rem,18vw,8rem);
+  animation:bounceM 1.6s ease-in-out infinite;
+  filter:drop-shadow(0 10px 10px rgba(0,0,0,.2));
+}
+@keyframes bounceM{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-22px) scale(1.06);}}
+
+/* level select grid */
+.levelgrid{display:flex;flex-wrap:wrap;justify-content:center;max-width:560px;}
+.levelcard{
+  width:130px;height:130px;border-radius:28px;border:none;cursor:pointer;
+  font-family:inherit;color:var(--ink);font-weight:800;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  box-shadow:0 8px 0 rgba(0,0,0,.15),0 12px 22px rgba(0,0,0,.18);
+  transition:transform .12s ease;margin:9px;
+}
+.levelcard:active{transform:scale(.94);}
+.levelcard .lvlnum{font-size:2.6rem;line-height:1;}
+.levelcard .lvllabel{font-size:.95rem;}
+
+/* ---------- top bar in game ---------- */
+#topbar{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;z-index:20;
+}
+.pill{
+  background:var(--card);border-radius:20px;padding:8px 14px;
+  font-weight:800;font-size:clamp(.85rem,3.6vw,1.2rem);
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+#progressWrap{flex:1;height:22px;background:var(--card);border-radius:20px;overflow:hidden;box-shadow:inset 0 2px 5px rgba(0,0,0,.15);}
+#progressBar{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--yellow));transition:width .4s ease;border-radius:20px;}
+.iconbtn{
+  width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--card);font-size:1.4rem;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
+  display:flex;align-items:center;justify-content:center;
+}
+.iconbtn:active{transform:scale(.9);}
+
+/* ---------- prompt banner ---------- */
+#prompt{
+  position:absolute;top:64px;left:50%;transform:translateX(-50%);
+  z-index:15;text-align:center;pointer-events:none;width:92%;
+}
+#promptText{
+  display:inline-block;background:var(--card);
+  border-radius:26px;padding:12px 22px;
+  font-size:clamp(1.1rem,5.2vw,2rem);font-weight:800;
+  box-shadow:0 6px 16px rgba(0,0,0,.2);
+  animation:popIn .5s ease;
+}
+@keyframes popIn{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+#promptText .country{color:#e0466b;}
+
+/* ---------- balloons ---------- */
+#playfield{position:absolute;inset:0;z-index:5;overflow:hidden;}
+.balloon{
+  position:absolute;
+  width:96px;height:118px;
+  cursor:pointer;
+  will-change:transform;
+}
+.balloon .body{
+  position:relative;width:96px;height:112px;border-radius:50% 50% 48% 48%;
+  box-shadow:inset -10px -12px 20px rgba(0,0,0,.18),inset 12px 10px 18px rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  animation:wiggle 3s ease-in-out infinite;
+}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+.balloon .body::after{ /* shine */
+  content:"";position:absolute;top:12px;left:16px;width:22px;height:30px;
+  background:rgba(255,255,255,.55);border-radius:50%;transform:rotate(-20deg);
+}
+.balloon .knot{
+  width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;
+  border-top:12px solid rgba(0,0,0,.15);margin:-2px auto 0;
+}
+.balloon .string{
+  width:2px;height:34px;background:rgba(0,0,0,.25);margin:0 auto;
+}
+/* flag inside balloon */
+.flagimg{
+  width:74px;height:50px;border-radius:8px;overflow:hidden;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  display:flex;flex-wrap:wrap;
+  font-size:2.6rem;line-height:1;align-items:center;justify-content:center;
+  background:#fff;
+  position:relative;z-index:2;
+}
+.flagimg .emojiflag{font-size:2.7rem;}
+
+/* pop burst */
+.burst{
+  position:absolute;z-index:30;font-size:3rem;pointer-events:none;
+  animation:burst .6s ease forwards;
+}
+@keyframes burst{
+  0%{transform:scale(.4);opacity:1;}
+  100%{transform:scale(2.2);opacity:0;}
+}
+
+/* shake on wrong */
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-10px);}
+  40%{transform:translateX(10px);}
+  60%{transform:translateX(-7px);}
+  80%{transform:translateX(7px);}
+}
+.shake{animation:shake .45s ease;}
+
+/* ---------- reward popup ---------- */
+#reward{
+  position:absolute;inset:0;z-index:40;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.35);backdrop-filter:blur(2px);
+}
+#rewardCard{
+  background:var(--card);border-radius:34px;
+  padding:26px 22px;max-width:90%;width:420px;text-align:center;
+  box-shadow:0 16px 40px rgba(0,0,0,.3);
+  animation:popIn .45s ease;
+}
+#rewardCard .yay{font-size:clamp(1.6rem,7vw,2.6rem);font-weight:800;color:#e0466b;margin:0 0 6px;}
+#rewardAnimal{font-size:clamp(3.5rem,16vw,6rem);margin:6px 0;animation:bounceM 1.4s ease-in-out infinite;}
+#rewardAnimalName{font-size:clamp(1.1rem,5vw,1.6rem);font-weight:800;margin:0 0 8px;}
+#rewardIntro{font-size:clamp(0.95rem,4.2vw,1.25rem);margin:0 0 4px;opacity:.85;}
+#rewardFact{font-size:clamp(1rem,4.4vw,1.35rem);line-height:1.35;margin:0 0 12px;}
+#countryFactBox{
+  background:linear-gradient(135deg,#fff9e6,#ffe8f5);
+  border-radius:18px;padding:12px 16px;margin:0 0 16px;
+  border:2px dashed var(--orange);
+}
+#countryFactIntro{font-size:clamp(.9rem,3.9vw,1.15rem);font-weight:800;color:#e0466b;margin:0 0 6px;}
+#countryFact{font-size:clamp(.95rem,4.2vw,1.25rem);line-height:1.4;margin:0;}
+
+/* ---------- confetti ---------- */
+#confetti{position:absolute;inset:0;z-index:35;pointer-events:none;overflow:hidden;}
+.confpiece{position:absolute;width:14px;height:18px;border-radius:3px;top:-30px;animation:fall linear forwards;}
+@keyframes fall{
+  to{transform:translateY(120vh) rotate(720deg);}
+}
+
+/* ---------- win screen ---------- */
+#winStars{font-size:clamp(2.5rem,12vw,5rem);animation:bob 2s ease-in-out infinite;}
+
+/* small helper text */
+.helper{font-size:clamp(.85rem,3.6vw,1.1rem);opacity:.8;margin-top:14px;max-width:420px;}
+
+/* portrait nudge handled by flexible layout; nothing forced */
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- floating clouds -->
+  <div class="cloud" style="top:8%;animation-duration:34s;">☁️</div>
+  <div class="cloud" style="top:22%;animation-duration:46s;animation-delay:-12s;">☁️</div>
+  <div class="cloud" style="top:40%;animation-duration:40s;animation-delay:-22s;">⛅</div>
+
+  <!-- ============ START SCREEN ============ -->
+  <section id="startScreen" class="screen">
+    <h1 class="title">Flag Balloon Pop!</h1>
+    <p class="subtitle">Pop the balloons. Meet the animals!</p>
+    <button class="bigbtn green" id="startBtn">▶ Play</button>
+    <p class="helper">Tap Play, then pop the flag we ask for. Every pop has a happy surprise!</p>
+  </section>
+
+  <!-- ============ LEVEL SELECT ============ -->
+  <section id="levelScreen" class="screen hidden">
+    <h1 class="title" style="font-size:clamp(1.8rem,9vw,3.5rem);">Pick a Level</h1>
+    <div class="levelgrid" id="levelGrid"></div>
+    <button class="bigbtn yellow" id="backHomeBtn" style="margin-top:6px;">🏠 Home</button>
+  </section>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <section id="gameScreen" class="screen hidden" style="justify-content:flex-start;padding:0;">
+    <div id="topbar">
+      <span class="pill" id="levelPill">Lvl 1</span>
+      <div id="progressWrap"><div id="progressBar"></div></div>
+      <span class="pill" id="scorePill">⭐ 0</span>
+      <button class="iconbtn" id="muteBtn" title="Sound on/off">🔊</button>
+      <button class="iconbtn" id="quitBtn" title="Back to levels">🏠</button>
+    </div>
+    <div id="prompt"><span id="promptText"></span></div>
+    <div id="playfield"></div>
+  </section>
+
+  <!-- ============ REWARD POPUP ============ -->
+  <div id="reward" class="hidden">
+    <div id="rewardCard">
+      <p class="yay" id="rewardYay">Great job!</p>
+      <div id="rewardAnimal">🦅</div>
+      <p id="rewardAnimalName">Bald Eagle</p>
+      <p id="rewardIntro">You know something interesting about the</p>
+      <p id="rewardFact">Eagles can see a fish from way up high!</p>
+      <div id="countryFactBox">
+        <p id="countryFactIntro">🌍 Let me give you an interesting fact about the country!</p>
+        <p id="countryFact">The USA has the biggest statue of a lady holding a torch!</p>
+      </div>
+      <button class="bigbtn orange" id="nextBtn">Next ▶</button>
+    </div>
+  </div>
+
+  <!-- ============ WIN SCREEN ============ -->
+  <section id="winScreen" class="screen hidden">
+    <div id="winStars">🌟⭐🌟</div>
+    <h1 class="title" id="winTitle">You did it!</h1>
+    <p class="subtitle" id="winSub">All balloons popped!</p>
+    <div>
+      <button class="bigbtn green" id="nextLevelBtn">Next Level ▶</button>
+      <button class="bigbtn pink" id="replayBtn">↺ Play Again</button>
+    </div>
+    <button class="bigbtn yellow" id="winHomeBtn" style="margin-top:4px;">🏠 Levels</button>
+  </section>
+
+  <div id="confetti"></div>
+</div>
+
+<script>
+/* ============================================================
+   FLAG BALLOON POP - game logic
+   Vanilla JS. No dependencies. Works offline / on GitHub Pages.
+   Sections:
+     1. DATA          country flags + animals + facts
+     2. AUDIO         Web Audio sound fx + Speech voice
+     3. STATE         current level / round tracking
+     4. SCREENS       show/hide helpers
+     5. BALLOONS      spawn + animate + pop
+     6. ROUNDS        prompt, win-checking, rewards
+     7. CONFETTI      celebration
+     8. WIRING        button events
+   ============================================================ */
+
+/* ---------- 1. DATA ----------
+   Each country: emoji flag (mobile/mac), CSS-stripe fallback colors
+   (so Windows desktop still shows a flag), animal emoji, name, fact. */
+const DATA = {
+  USA:{flag:"🇺🇸",name:"U.S.A.",stripes:["#b22234","#fff","#3c3b6e"],animal:"🦅",animalName:"Bald Eagle",fact:"Eagles can see a fish from way up high in the sky!",countryFact:"The USA has the biggest statue made of a lady holding a torch called the Statue of Liberty!"},
+  UK:{flag:"🇬🇧",name:"U.K.",stripes:["#012169","#fff","#c8102e"],animal:"🦊",animalName:"Red Fox",fact:"Foxes can hear a mouse squeak far, far away!",countryFact:"The UK has a real king or queen who lives in a giant palace called Buckingham Palace!"},
+  Japan:{flag:"🇯🇵",name:"Japan",stripes:["#fff","#bc002d","#fff"],animal:"🐼",animalName:"Red Panda",fact:"Red pandas have a secret weapon, a stinky spray!",countryFact:"Japan has a mountain called Mount Fuji that is so tall it touches the clouds!"},
+  France:{flag:"🇫🇷",name:"France",stripes:["#0055a4","#fff","#ef4135"],animal:"🐓",animalName:"Rooster",fact:"Roosters sing cock-a-doodle-doo to say good morning!",countryFact:"France has a super tall metal tower called the Eiffel Tower that sparkles at night!"},
+  Brazil:{flag:"🇧🇷",name:"Brazil",stripes:["#009c3b","#ffdf00","#009c3b"],animal:"🐆",animalName:"Jaguar",fact:"Jaguars are the strongest jumpers in the cat family!",countryFact:"Brazil has the biggest rainforest in the whole world, full of amazing animals!"},
+  Spain:{flag:"🇪🇸",name:"Spain",stripes:["#aa151b","#f1bf00","#aa151b"],animal:"🐂",animalName:"Bull",fact:"Bulls love to run fast across big green fields!",countryFact:"Spain has a yummy food called paella made with rice and lots of colourful vegetables!"},
+  Mexico:{flag:"🇲🇽",name:"Mexico",stripes:["#006847","#fff","#ce1126"],animal:"🦎",animalName:"Iguana",fact:"Iguanas love to sit in the warm, sunny sunshine!",countryFact:"Mexico has ancient pyramids built by people called the Aztecs a very long time ago!"},
+  Italy:{flag:"🇮🇹",name:"Italy",stripes:["#009246","#fff","#ce2b37"],animal:"🐺",animalName:"Wolf",fact:"Wolves sing together with a big howl, awoooo!",countryFact:"Italy invented pizza and ice cream, two of the yummiest foods in the whole world!"},
+  Germany:{flag:"🇩🇪",name:"Germany",stripes:["#000","#dd0000","#ffce00"],animal:"🦅",animalName:"Eagle",fact:"Eagles spread big wings and glide in the air!",countryFact:"Germany has a fairy tale castle called Neuschwanstein that looks just like a castle from a storybook!"},
+  Canada:{flag:"🇨🇦",name:"Canada",stripes:["#ff0000","#fff","#ff0000"],animal:"🦫",animalName:"Beaver",fact:"Beavers build cozy houses out of sticks and mud!",countryFact:"Canada has the most beautiful waterfalls called Niagara Falls that make a giant roaring sound!"},
+
+  Australia:{flag:"🇦🇺",name:"Australia",stripes:["#00008b","#fff","#00008b"],animal:"🦘",animalName:"Kangaroo",fact:"Baby kangaroos ride in a cozy tummy pocket!",countryFact:"Australia has a big red rock in the middle called Uluru and it glows orange at sunset!"},
+  SouthAfrica:{flag:"🇿🇦",name:"South Africa",stripes:["#007749","#ffb612","#de3831"],animal:"🦁",animalName:"Lion",fact:"Lions take big naps for almost the whole day!",countryFact:"South Africa has a table-shaped mountain called Table Mountain with clouds that look like a tablecloth!"},
+  India:{flag:"🇮🇳",name:"India",stripes:["#ff9933","#fff","#138808"],animal:"🐘",animalName:"Elephant",fact:"Elephants slurp water with their long, bendy nose!",countryFact:"India has a beautiful white palace called the Taj Mahal that shines like a pearl in the moonlight!"},
+  Greece:{flag:"🇬🇷",name:"Greece",stripes:["#0d5eaf","#fff","#0d5eaf"],animal:"🐬",animalName:"Dolphin",fact:"Dolphins love to jump and splash in the sea!",countryFact:"Greece has thousands of tiny islands surrounded by the most beautiful blue sparkling sea!"},
+  Netherlands:{flag:"🇳🇱",name:"Netherlands",stripes:["#ae1c28","#fff","#21468b"],animal:"🐄",animalName:"Cow",fact:"Cows say moo and love munching green grass!",countryFact:"The Netherlands has giant spinning windmills and fields full of beautiful bright tulip flowers!"},
+  Portugal:{flag:"🇵🇹",name:"Portugal",stripes:["#006600","#006600","#ff0000"],animal:"🐟",animalName:"Sardine",fact:"Sardines swim together in big shiny groups!",countryFact:"Portugal has colourful patterned tiles on its buildings that tell stories through pictures!"},
+  Poland:{flag:"🇵🇱",name:"Poland",stripes:["#fff","#fff","#dc143c"],animal:"🦬",animalName:"Bison",fact:"Bison are big and fuzzy with a warm woolly coat!",countryFact:"Poland has a magical forest called Bialowieza where the last wild bison in Europe live!"},
+  Turkey:{flag:"🇹🇷",name:"Turkey",stripes:["#e30a17","#e30a17","#e30a17"],animal:"🐈",animalName:"Cat",fact:"Cats purr a happy buzzy song when they are glad!",countryFact:"Turkey has a place called Cappadocia with giant rock towers that look like fairy chimneys!"},
+  Egypt:{flag:"🇪🇬",name:"Egypt",stripes:["#ce1126","#fff","#000"],animal:"🐫",animalName:"Camel",fact:"Camels carry water inside their big bumpy hump!",countryFact:"Egypt has giant triangle-shaped buildings called pyramids that are thousands and thousands of years old!"},
+  Morocco:{flag:"🇲🇦",name:"Morocco",stripes:["#c1272d","#c1272d","#c1272d"],animal:"🐐",animalName:"Goat",fact:"Some goats climb high up into the tippy-top trees!",countryFact:"Morocco has colourful busy markets full of spices, rugs, and the most amazing smells!"},
+
+  Thailand:{flag:"🇹🇭",name:"Thailand",stripes:["#a51931","#2d2a4a","#a51931"],animal:"🐘",animalName:"Elephant",fact:"Elephants flap their big ears to stay nice and cool!",countryFact:"Thailand has gorgeous golden temples with rooftops that shine so bright in the sunshine!"},
+  Vietnam:{flag:"🇻🇳",name:"Vietnam",stripes:["#da251d","#ffff00","#da251d"],animal:"🐉",animalName:"Dragon",fact:"Dragons are friendly heroes in many fun stories!",countryFact:"Vietnam has a bay full of giant rock islands poking out of the emerald green water!"},
+  Singapore:{flag:"🇸🇬",name:"Singapore",stripes:["#ef3340","#fff","#fff"],animal:"🦁",animalName:"Merlion",fact:"The Merlion is half lion and half fish, how cool!",countryFact:"Singapore has amazing gardens with supertrees that light up at night like giant glowing plants!"},
+  Czechia:{flag:"🇨🇿",name:"Czech Republic",stripes:["#fff","#d7141a","#11457e"],animal:"🦌",animalName:"Deer",fact:"Deer can hop super high over logs in the woods!",countryFact:"Czech Republic has a beautiful old city called Prague with a famous clock that puts on a show every hour!"},
+  Romania:{flag:"🇷🇴",name:"Romania",stripes:["#002b7f","#fcd116","#ce1126"],animal:"🐻",animalName:"Bear",fact:"Bears love to munch sweet berries and honey!",countryFact:"Romania has Bran Castle sitting on a hill in the mountains that looks like it is from a fairy tale!"},
+  Croatia:{flag:"🇭🇷",name:"Croatia",stripes:["#ff0000","#fff","#171796"],animal:"🦫",animalName:"Marten",fact:"Martens are fluffy climbers with a long swishy tail!",countryFact:"Croatia has beautiful lakes with waterfalls that are the most amazing shades of blue and green!"},
+  Hungary:{flag:"🇭🇺",name:"Hungary",stripes:["#cd2a3e","#fff","#436f4d"],animal:"🐦",animalName:"Falcon",fact:"Falcons zoom through the sky super duper fast!",countryFact:"Hungary has a huge beautiful parliament building that sits right next to a big sparkling river!"},
+  Serbia:{flag:"🇷🇸",name:"Serbia",stripes:["#c6363c","#0c4076","#fff"],animal:"🐺",animalName:"Wolf",fact:"Wolves live together in a big, happy family pack!",countryFact:"Serbia has a festival where people float tiny candles on the river and it looks like magic!"},
+  Latvia:{flag:"🇱🇻",name:"Latvia",stripes:["#9e3039","#fff","#9e3039"],animal:"🐦",animalName:"Wagtail",fact:"This little bird wags its tail up and down, hello!",countryFact:"Latvia has forests so big and beautiful that people say they feel like they are in a fairy tale!"},
+  Estonia:{flag:"🇪🇪",name:"Estonia",stripes:["#0072ce","#000","#fff"],animal:"🐝",animalName:"Swallow",fact:"Swallows swoop and loop happily in the warm sky!",countryFact:"Estonia has an old town that looks like a real medieval castle town, with towers and cobblestone streets!"},
+
+  Cambodia:{flag:"🇰🇭",name:"Cambodia",stripes:["#032ea1","#e00025","#032ea1"],animal:"🐂",animalName:"Kouprey",fact:"The kouprey is a rare wild cow with big curvy horns!",countryFact:"Cambodia has a giant temple called Angkor Wat surrounded by a big moat of water, it is the biggest temple in the world!"},
+  Georgia:{flag:"🇬🇪",name:"Georgia",stripes:["#fff","#ff0000","#fff"],animal:"🐆",animalName:"Leopard",fact:"Leopards have pretty spots all over their soft fur!",countryFact:"Georgia has ancient cave cities carved right into the side of rocky cliffs thousands of years ago!"},
+  Lebanon:{flag:"🇱🇧",name:"Lebanon",stripes:["#ed1c24","#fff","#ed1c24"],animal:"🌳",animalName:"Cedar Tree",fact:"The cedar is a giant tree that lives a long, long time!",countryFact:"Lebanon makes the yummiest flat bread called pita that people use to scoop up tasty hummus!"},
+  Mongolia:{flag:"🇲🇳",name:"Mongolia",stripes:["#c4272a","#015197","#c4272a"],animal:"🐴",animalName:"Wild Horse",fact:"Wild horses gallop free across big open lands!",countryFact:"Mongolia has the biggest desert in Asia called the Gobi Desert where you can find real dinosaur fossils!"},
+  Cyprus:{flag:"🇨🇾",name:"Cyprus",stripes:["#fff","#d57800","#fff"],animal:"🐑",animalName:"Mouflon",fact:"The mouflon is a wild sheep with curly twisty horns!",countryFact:"Cyprus has warm sunny beaches with water so clear you can see all the fish swimming underneath!"},
+  Iceland:{flag:"🇮🇸",name:"Iceland",stripes:["#02529c","#fff","#dc1e35"],animal:"🐧",animalName:"Puffin",fact:"Puffins have a bright orange beak like a clown!",countryFact:"Iceland has dancing lights in the sky called the Northern Lights that are green, pink, and purple!"},
+  Luxembourg:{flag:"🇱🇺",name:"Luxembourg",stripes:["#ed2939","#fff","#00a1de"],animal:"🦁",animalName:"Lion",fact:"This brave lion stands proud and tall, roar!",countryFact:"Luxembourg is a tiny country but it has a beautiful old castle on top of a cliff in the middle of the city!"},
+  Malta:{flag:"🇲🇹",name:"Malta",stripes:["#fff","#fff","#cf142b"],animal:"🐬",animalName:"Dolphin",fact:"Dolphins click and whistle to talk to their friends!",countryFact:"Malta has ancient underground rooms called the Hypogeum that are older than the pyramids in Egypt!"},
+  Mauritius:{flag:"🇲🇺",name:"Mauritius",stripes:["#ea2839","#1a206d","#00a551"],animal:"🦤",animalName:"Dodo",fact:"The dodo was a chubby bird that could not fly!",countryFact:"Mauritius has an underwater waterfall you can see from the sky, it is actually sand flowing down into the ocean!"},
+  Bahrain:{flag:"🇧🇭",name:"Bahrain",stripes:["#fff","#ce1126","#ce1126"],animal:"🐪",animalName:"Camel",fact:"Camels can walk a long way without getting tired!",countryFact:"Bahrain has a tree called the Tree of Life that grows alone in the desert with no water nearby, it is a mystery!"}
+};
+
+const LEVELS = [
+  {label:"Easy",  color:"#9be564", keys:["USA","UK","Japan","France","Brazil","Spain","Mexico","Italy","Germany","Canada"]},
+  {label:"Medium",color:"#ffe066", keys:["Australia","SouthAfrica","India","Greece","Netherlands","Portugal","Poland","Turkey","Egypt","Morocco"]},
+  {label:"Hard",  color:"#ff9fc7", keys:["Thailand","Vietnam","Singapore","Czechia","Romania","Croatia","Hungary","Serbia","Latvia","Estonia"]},
+  {label:"Expert",color:"#c79bff", keys:["Cambodia","Georgia","Lebanon","Mongolia","Cyprus","Iceland","Luxembourg","Malta","Mauritius","Bahrain"]}
+];
+
+/* ---------- 2. AUDIO ---------- */
+let muted=false;
+let audioCtx=null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  }
+  if(audioCtx && audioCtx.state==="suspended"){audioCtx.resume();}
+}
+/* simple beep generator */
+function tone(freq,dur,type="sine",vol=0.25,slideTo=null){
+  if(muted||!audioCtx) return;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.type=type;o.frequency.value=freq;
+  if(slideTo){o.frequency.linearRampToValueAtTime(slideTo,audioCtx.currentTime+dur);}
+  g.gain.setValueAtTime(vol,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+  o.connect(g);g.connect(audioCtx.destination);
+  o.start();o.stop(audioCtx.currentTime+dur);
+}
+const SFX={
+  click(){tone(520,0.08,"square",0.18);},
+  pop(){tone(700,0.12,"sine",0.3,180);},          // balloon pop, downward swoop
+  success(){tone(660,0.12,"sine",0.25);setTimeout(()=>tone(880,0.16,"sine",0.25),110);},
+  wrong(){tone(220,0.18,"sine",0.2,150);},        // gentle, low, not scary
+  celebrate(){[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,0.22,"triangle",0.25),i*130));}
+};
+
+/* speech */
+function say(text){
+  if(muted||!("speechSynthesis" in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=0.9;u.pitch=1.25;u.volume=1;
+    // prefer an English voice if available
+    const v=speechSynthesis.getVoices().find(v=>/en/i.test(v.lang));
+    if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+// warm up voice list on some browsers
+if("speechSynthesis" in window){speechSynthesis.onvoiceschanged=()=>{};}
+
+/* ---------- 3. STATE ---------- */
+let levelIndex=0;
+let order=[];          // shuffled country keys for this level
+let roundIdx=0;        // which target we are on (0..9)
+let score=0;
+let balloons=[];       // active balloon objects
+let rafId=null;
+
+/* ---------- 4. SCREENS ---------- */
+const screens={
+  start:document.getElementById("startScreen"),
+  level:document.getElementById("levelScreen"),
+  game:document.getElementById("gameScreen"),
+  win:document.getElementById("winScreen")
+};
+function show(name){
+  Object.values(screens).forEach(s=>s.classList.add("hidden"));
+  if(screens[name])screens[name].classList.remove("hidden");
+}
+
+/* build level select cards */
+function buildLevelGrid(){
+  const grid=document.getElementById("levelGrid");
+  grid.innerHTML="";
+  LEVELS.forEach((lv,i)=>{
+    const b=document.createElement("button");
+    b.className="levelcard";
+    b.style.background=lv.color;
+    b.innerHTML=`<span class="lvlnum">${i+1}</span><span class="lvllabel">${lv.label}</span>`;
+    b.addEventListener("click",()=>{SFX.click();startLevel(i);});
+    grid.appendChild(b);
+  });
+}
+
+/* ---------- 5. BALLOONS ---------- */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const balloonColors=["#ff9fc7","#8fd3ff","#9be564","#ffe066","#ffb056","#c79bff"];
+
+function makeFlagMarkup(key){
+  const d=DATA[key];
+  // emoji flag (renders on mobile/mac) layered over CSS stripe fallback (Windows desktop)
+  const stripes=d.stripes.map(c=>`<div style="flex:1;height:100%;background:${c};"></div>`).join("");
+  return `<div class="flagimg">
+            <div style="position:absolute;inset:0;display:flex;">${stripes}</div>
+            <span class="emojiflag" style="position:relative;z-index:2;">${d.flag}</span>
+          </div>`;
+}
+
+function spawnBalloons(){
+  const field=document.getElementById("playfield");
+  field.innerHTML="";
+  balloons=[];
+  const w=field.clientWidth;
+  const h=field.clientHeight;
+  const cols=order.length;            // 10 balloons, the whole level's flags
+  const keysForRound=shuffle(order);  // randomize positions each round
+
+  keysForRound.forEach((key,i)=>{
+    const el=document.createElement("div");
+    el.className="balloon";
+    const color=balloonColors[i%balloonColors.length];
+    el.innerHTML=`<div class="body" style="background:${color};">${makeFlagMarkup(key)}</div>
+                  <div class="knot"></div><div class="string"></div>`;
+    field.appendChild(el);
+
+    // spread across width in a soft grid, start below the screen
+    const laneW=w/cols;
+    const x=Math.max(6,Math.min(w-100, laneW*i + (laneW-96)/2 + (Math.random()*20-10)));
+    const startY=h + 40 + Math.random()*h*0.7;   // staggered so they rise in waves
+    const speed=48+Math.random()*28;             // px per second, increased for faster gameplay
+    const driftAmp=14+Math.random()*16;
+    const driftSpeed=0.4+Math.random()*0.5;
+    const phase=Math.random()*Math.PI*2;
+
+    const b={el,key,x,y:startY,speed,driftAmp,driftSpeed,phase,baseX:x,popped:false};
+    el.style.transform=`translate(${x}px,${startY}px)`;
+    el.addEventListener("click",()=>onBalloonTap(b));
+    balloons.push(b);
+  });
+}
+
+let lastT=0;
+function animate(t){
+  if(!lastT)lastT=t;
+  const dt=Math.min(0.05,(t-lastT)/1000);
+  lastT=t;
+  const h=document.getElementById("playfield").clientHeight;
+  balloons.forEach(b=>{
+    if(b.popped)return;
+    b.y-=b.speed*dt;
+    const drift=Math.sin(t/1000*b.driftSpeed+b.phase)*b.driftAmp;
+    b.x=b.baseX+drift;
+    // when a balloon floats off the top, wrap it back to the bottom (keeps choices on screen)
+    if(b.y<-140){b.y=h+40+Math.random()*120;}
+    b.el.style.transform=`translate(${b.x}px,${b.y}px)`;
+  });
+  rafId=requestAnimationFrame(animate);
+}
+function startAnim(){cancelAnimationFrame(rafId);lastT=0;rafId=requestAnimationFrame(animate);}
+function stopAnim(){cancelAnimationFrame(rafId);rafId=null;}
+
+/* ---------- 6. ROUNDS ---------- */
+function startLevel(i){
+  ensureAudio();
+  levelIndex=i;
+  order=LEVELS[i].keys.slice();
+  roundIdx=0;
+  score=0;
+  document.getElementById("levelPill").textContent="Lvl "+(i+1);
+  updateHUD();
+  show("game");
+  spawnBalloons();
+  startAnim();
+  nextRound();
+}
+
+function currentTargetKey(){
+  // each round targets one flag; we walk through the level's 10 flags in shuffled order
+  return roundShuffle[roundIdx];
+}
+let roundShuffle=[];
+
+function nextRound(){
+  if(roundIdx===0){roundShuffle=shuffle(order);}
+  if(roundIdx>=order.length){winLevel();return;}
+  const key=roundShuffle[roundIdx];
+  const d=DATA[key];
+  const pt=document.getElementById("promptText");
+  pt.innerHTML=`Pop the flag of <span class="country">${d.name}</span>!`;
+  pt.style.animation="none";void pt.offsetWidth;pt.style.animation="popIn .5s ease";
+  // re-scatter balloon positions so the target is in a new spot
+  repositionBalloons();
+  setTimeout(()=>say("Pop the flag of "+d.name),250);
+}
+
+function repositionBalloons(){
+  // reset any popped balloons back to active and re-spread horizontally
+  const field=document.getElementById("playfield");
+  const w=field.clientWidth, h=field.clientHeight;
+  const cols=balloons.length;
+  const idxs=shuffle(balloons.map((_,i)=>i));
+  balloons.forEach((b,i)=>{
+    b.popped=false;
+    b.el.style.display="block";
+    b.el.style.opacity="1";
+    const slot=idxs[i];
+    const laneW=w/cols;
+    b.baseX=Math.max(6,Math.min(w-100, laneW*slot + (laneW-96)/2));
+    b.x=b.baseX;
+    b.y=h+40+Math.random()*h*0.8;
+    b.el.style.transform=`translate(${b.x}px,${b.y}px)`;
+  });
+}
+
+function onBalloonTap(b){
+  if(b.popped)return;
+  ensureAudio();
+  const target=roundShuffle[roundIdx];
+  if(b.key===target){
+    popCorrect(b);
+  }else{
+    popWrong(b);
+  }
+}
+
+function popWrong(b){
+  SFX.wrong();
+  b.el.classList.add("shake");
+  setTimeout(()=>b.el.classList.remove("shake"),460);
+  say("Try again!");
+}
+
+function popCorrect(b){
+  b.popped=true;
+  SFX.pop();
+  // burst emoji at balloon location
+  const field=document.getElementById("playfield");
+  const burst=document.createElement("div");
+  burst.className="burst";burst.textContent="💥";
+  burst.style.left=b.x+"px";burst.style.top=b.y+"px";
+  field.appendChild(burst);
+  setTimeout(()=>burst.remove(),600);
+  b.el.style.transition="opacity .15s, transform .15s";
+  b.el.style.opacity="0";
+  b.el.style.transform+=" scale(1.4)";
+  setTimeout(()=>{b.el.style.display="none";},150);
+
+  score++;
+  updateHUD();
+  setTimeout(()=>SFX.success(),120);
+  showReward(b.key);
+}
+
+function updateHUD(){
+  document.getElementById("scorePill").textContent="⭐ "+score;
+  const pct=(roundIdx/order.length)*100;
+  document.getElementById("progressBar").style.width=pct+"%";
+}
+
+/* reward popup with animal + fact */
+const praises=["Great job!","Awesome!","You are so smart!","You did it!","Wonderful!","Hooray! You got it!","Brilliant! Well done!","Superstar!"];
+function showReward(key){
+  const d=DATA[key];
+  const praise=praises[Math.floor(Math.random()*praises.length)];
+  document.getElementById("rewardYay").textContent=praise;
+  document.getElementById("rewardAnimal").textContent=d.animal;
+  document.getElementById("rewardAnimalName").textContent=d.animalName;
+  document.getElementById("rewardIntro").textContent="Did you know something about the";
+  document.getElementById("rewardFact").textContent=d.fact;
+  document.getElementById("countryFact").textContent=d.countryFact;
+  document.getElementById("reward").classList.remove("hidden");
+  miniConfetti();
+
+  // Sequence: praise → animal fact → short pause → country fact intro → country fact
+  // Uses chained timeouts so each phrase finishes before the next starts naturally.
+  const animalLine = "Did you know something about the " + d.animalName + "? " + d.fact;
+  const countryLine = "And here is an interesting fact about " + d.name + ". " + d.countryFact;
+
+  setTimeout(()=>{
+    say(praise);
+    // estimate praise duration then chain animal fact
+    const praiseDur = Math.max(1200, praise.length * 75);
+    setTimeout(()=>{
+      say(animalLine);
+      // estimate animal line duration then chain country fact
+      const animalDur = Math.max(2000, animalLine.length * 68);
+      setTimeout(()=>{
+        say("Let me give you an interesting fact about the country. " + countryLine);
+      }, animalDur);
+    }, praiseDur);
+  }, 350);
+}
+
+function closeRewardAndAdvance(){
+  document.getElementById("reward").classList.add("hidden");
+  roundIdx++;
+  updateHUD();
+  if(roundIdx>=order.length){winLevel();}
+  else{nextRound();}
+}
+
+function winLevel(){
+  stopAnim();
+  show("win");
+  document.getElementById("progressBar").style.width="100%";
+  SFX.celebrate();
+  bigConfetti();
+  const title=document.getElementById("winTitle");
+  title.textContent="Level "+(levelIndex+1)+" Done!";
+  document.getElementById("winSub").textContent="You popped all 10 flags! ⭐";
+  // hide "Next Level" on the last level
+  document.getElementById("nextLevelBtn").style.display = (levelIndex<LEVELS.length-1)?"inline-block":"none";
+  setTimeout(()=>say("Hooray! You did it! Great job!"),300);
+}
+
+/* ---------- 7. CONFETTI ---------- */
+function dropConfetti(count){
+  const c=document.getElementById("confetti");
+  const colors=balloonColors;
+  for(let i=0;i<count;i++){
+    const p=document.createElement("div");
+    p.className="confpiece";
+    p.style.left=Math.random()*100+"vw";
+    p.style.background=colors[i%colors.length];
+    p.style.animationDuration=(1.6+Math.random()*1.6)+"s";
+    p.style.animationDelay=(Math.random()*0.3)+"s";
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),3600);
+  }
+}
+function miniConfetti(){dropConfetti(28);}
+function bigConfetti(){dropConfetti(90);}
+
+/* ---------- 8. WIRING ---------- */
+document.getElementById("startBtn").addEventListener("click",()=>{
+  ensureAudio();SFX.click();
+  // unlock speech on first gesture (mobile requirement)
+  say(" ");
+  buildLevelGrid();
+  show("level");
+});
+document.getElementById("backHomeBtn").addEventListener("click",()=>{SFX.click();show("start");});
+document.getElementById("quitBtn").addEventListener("click",()=>{SFX.click();stopAnim();show("level");});
+document.getElementById("nextBtn").addEventListener("click",()=>{SFX.click();closeRewardAndAdvance();});
+document.getElementById("nextLevelBtn").addEventListener("click",()=>{
+  SFX.click();
+  if(levelIndex<LEVELS.length-1){startLevel(levelIndex+1);}
+});
+document.getElementById("replayBtn").addEventListener("click",()=>{SFX.click();startLevel(levelIndex);});
+document.getElementById("winHomeBtn").addEventListener("click",()=>{SFX.click();buildLevelGrid();show("level");});
+
+document.getElementById("muteBtn").addEventListener("click",function(){
+  muted=!muted;
+  this.textContent=muted?"🔇":"🔊";
+  if(muted&&"speechSynthesis"in window)speechSynthesis.cancel();
+  if(!muted){ensureAudio();SFX.click();}
+});
+
+// keyboard: space or enter advances reward popup (simple keyboard input)
+document.addEventListener("keydown",e=>{
+  if((e.code==="Space"||e.code==="Enter") && !document.getElementById("reward").classList.contains("hidden")){
+    e.preventDefault();closeRewardAndAdvance();
+  }
+});
+
+// keep balloon lanes correct if the window resizes / rotates
+window.addEventListener("resize",()=>{
+  if(!screens.game.classList.contains("hidden")&&balloons.length){repositionBalloons();}
+});
+
+// start on the welcome screen
+show("start");
+</script>
+</body>
+</html>
