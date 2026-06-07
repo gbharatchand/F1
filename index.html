@@ -1,112 +1,427 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Bharat's Game World</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#8edcff" />
+<title>Bharat's Game World</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&display=swap");
 
-  <style>
-    body{
-      font-family: Arial;
-      background: linear-gradient(180deg,#0f172a,#111827);
-      color:white;
-      text-align:center;
-      padding:40px;
-      margin:0;
-    }
+:root{
+  --sky:#8edcff;
+  --sky2:#dff8ff;
+  --blue:#174ab6;
+  --green:#55c945;
+  --green2:#8fea55;
+  --pink:#ff5ca8;
+  --orange:#ff7b54;
+  --yellow:#ffd84d;
+  --purple:#8f7cff;
+  --ink:#173b5f;
+  --soft:#f5fbff;
+}
 
-    h1{
-      color:#ff8700;
-      font-size:48px;
-      margin-bottom:10px;
-    }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{
+  font-family:"Fredoka",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(255,255,255,.8) 0 48px,transparent 49px),
+    radial-gradient(circle at 88% 9%,rgba(255,216,77,.95) 0 58px,transparent 59px),
+    linear-gradient(180deg,#bdf1ff 0%,#e9fbff 45%,#b9f0b9 46%,#69cd61 100%);
+}
 
-    p{
-      color:#cbd5e1;
-      margin-bottom:40px;
-      font-size:18px;
-    }
+.page{
+  position:relative;
+  min-height:100vh;
+  padding:22px clamp(16px,3vw,34px) 34px;
+  overflow:hidden;
+}
 
-    .games{
-      display:flex;
-      justify-content:center;
-      flex-wrap:wrap;
-      gap:25px;
-    }
+.cloud{
+  position:absolute;
+  background:rgba(255,255,255,.78);
+  border-radius:999px;
+  filter:drop-shadow(0 10px 18px rgba(45,120,160,.10));
+  pointer-events:none;
+}
+.cloud::before,.cloud::after{content:"";position:absolute;border-radius:50%;background:inherit}
+.cloud.c1{left:4%;top:10%;width:150px;height:48px}
+.cloud.c1::before{left:20px;top:-28px;width:68px;height:68px}
+.cloud.c1::after{right:18px;top:-20px;width:54px;height:54px}
+.cloud.c2{right:8%;top:18%;width:180px;height:54px;opacity:.65}
+.cloud.c2::before{left:28px;top:-34px;width:76px;height:76px}
+.cloud.c2::after{right:26px;top:-24px;width:60px;height:60px}
 
-    .card{
-      width:260px;
-      background:#1e293b;
-      border-radius:20px;
-      padding:30px;
-      text-decoration:none;
-      color:white;
-      transition:0.3s;
-      box-shadow:0 8px 20px rgba(0,0,0,0.4);
-    }
+.hero{
+  position:relative;
+  z-index:2;
+  width:min(1120px,100%);
+  margin:0 auto;
+  min-height:92vh;
+  border-radius:42px;
+  padding:clamp(20px,4vw,46px);
+  background:rgba(255,255,255,.42);
+  border:6px solid rgba(255,255,255,.82);
+  box-shadow:0 28px 70px rgba(35,98,130,.20), inset 0 0 0 2px rgba(255,255,255,.45);
+  overflow:hidden;
+}
 
-    .card:hover{
-      transform:translateY(-8px) scale(1.03);
-      background:#334155;
-    }
+.hero::after{
+  content:"";
+  position:absolute;
+  left:-8%;
+  right:-8%;
+  bottom:-12%;
+  height:34%;
+  border-radius:50% 50% 0 0;
+  background:linear-gradient(180deg,#88df65,#42b83d);
+  box-shadow:inset 0 14px 0 rgba(255,255,255,.16);
+  z-index:0;
+}
 
-    .emoji{
-      font-size:60px;
-      margin-bottom:20px;
-    }
+.top{
+  position:relative;
+  z-index:2;
+  display:none;
+}
 
-    .title{
-      font-size:26px;
-      font-weight:bold;
-      margin-bottom:10px;
-      color:#ff8700;
-    }
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 15px;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  box-shadow:0 9px 18px rgba(40,100,140,.12);
+  font-weight:800;
+  color:#17406b;
+}
+.brandIcon{
+  width:44px;height:44px;border-radius:16px;
+  display:grid;place-items:center;font-size:1.7rem;
+  background:linear-gradient(180deg,#8fea55,#3caf32);
+  box-shadow:0 6px 0 #267929, inset 0 -4px 0 rgba(0,0,0,.10);
+}
 
-    .desc{
-      color:#cbd5e1;
-      font-size:14px;
-      line-height:1.5;
-    }
-  </style>
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.76);
+  box-shadow:0 9px 18px rgba(40,100,140,.12);
+  font-weight:800;
+  color:#31526a;
+}
+
+.titleWrap{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  margin:28px auto 58px;
+}
+
+.titleCloud{
+  position:relative;
+  width:min(690px,92vw);
+  min-height:205px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  filter:drop-shadow(0 18px 0 rgba(91,145,45,.10));
+}
+.titleCloud::before{
+  content:"";
+  position:absolute;
+  inset:24px 12px 24px;
+  border-radius:100px;
+  background:#fff;
+  box-shadow:0 0 0 8px rgba(121,173,78,.14), inset 0 -12px 0 rgba(91,145,45,.08);
+}
+.titleCloud::after{
+  content:"";
+  position:absolute;
+  left:70px;right:70px;top:0;height:112px;
+  border-radius:80px 80px 46px 46px;
+  background:#fff;
+  box-shadow:105px 12px 0 10px #fff,-100px 18px 0 4px #fff;
+}
+
+h1{
+  position:relative;
+  z-index:2;
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  font-size:clamp(2.45rem,6.6vw,5.2rem);
+  line-height:.84;
+  color:#456b92;
+  letter-spacing:-.03em;
+  text-shadow:0 4px 0 rgba(255,255,255,.95),0 8px 0 rgba(120,178,77,.18),0 14px 22px rgba(45,96,54,.12);
+}
+
+h1 .nameText{
+  display:block;
+  color:#5a7fa6;
+  margin-top:0;
+}
+
+h1 span{
+  display:block;
+  color:var(--orange);
+  margin-top:8px;
+}
+
+.subtitle{
+  position:relative;
+  z-index:2;
+  margin-top:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  color:#31526a;
+  font-weight:800;
+  box-shadow:none;
+}
+
+.featureRow{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:0 auto 24px;
+}
+
+.feature{
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.84);
+  font-weight:800;
+  color:#31526a;
+  box-shadow:0 7px 14px rgba(40,100,140,.10);
+}
+
+.grid{
+  position:relative;
+  z-index:2;
+  width:min(840px,100%);
+  margin:22px auto 0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.card{
+  position:relative;
+  min-height:145px;
+  border-radius:32px;
+  padding:16px;
+  text-decoration:none;
+  color:inherit;
+  overflow:hidden;
+  background:rgba(255,255,255,.92);
+  border:5px solid rgba(255,255,255,.76);
+  box-shadow:0 12px 0 rgba(62,129,42,.18),0 26px 36px rgba(40,100,52,.15);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+.card:hover{
+  transform:translateY(-5px);
+  filter:saturate(1.05);
+  box-shadow:0 16px 0 rgba(62,129,42,.16),0 32px 44px rgba(40,100,52,.18);
+}
+.card:active{
+  transform:translateY(5px);
+  box-shadow:0 6px 0 rgba(62,129,42,.16),0 14px 20px rgba(40,100,52,.12);
+}
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg,transparent 0 36%,rgba(255,255,255,.44) 46%,transparent 58%);
+  transform:translateX(-120%);
+  transition:transform .55s ease;
+}
+.card:hover::after{transform:translateX(120%)}
+
+.cardTop{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.gameIcon{
+  width:62px;height:62px;border-radius:21px;
+  display:grid;place-items:center;
+  font-size:2.05rem;
+  flex:0 0 auto;
+  border:5px solid rgba(255,255,255,.52);
+  box-shadow:0 8px 0 rgba(0,0,0,.14),0 16px 22px rgba(40,70,120,.14), inset 0 -6px 0 rgba(0,0,0,.08);
+}
+.f1 .gameIcon{background:linear-gradient(180deg,#1b2340,#0d1327)}
+.flags .gameIcon{background:linear-gradient(180deg,#8fea55,#3caf32)}
+.puzzle .gameIcon{background:linear-gradient(180deg,#ffd86c,#ff9d4d)}
+.piano .gameIcon{background:linear-gradient(180deg,#c6bbff,#7f6cff)}
+
+.card h2{
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  font-size:clamp(1.35rem,3.4vw,1.9rem);
+  color:var(--blue);
+  line-height:1;
+}
+.card p{
+  position:relative;
+  z-index:2;
+  margin-top:14px;
+  color:#4a6076;
+  font-weight:650;
+  line-height:1.32;
+}
+
+.playChip{
+  position:absolute;
+  right:18px;
+  bottom:16px;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#fff;
+  color:#226d20;
+  font-weight:900;
+  box-shadow:0 8px 14px rgba(40,100,52,.12);
+}
+.playCircle{
+  width:26px;height:26px;border-radius:50%;
+  display:grid;place-items:center;
+  color:#fff;
+  background:linear-gradient(180deg,#8fea55,#3caf32);
+  box-shadow:0 4px 0 #267929;
+  font-size:.85rem;
+}
+
+.footer{
+  position:relative;
+  z-index:2;
+  margin:26px auto 0;
+  width:min(760px,100%);
+  text-align:center;
+  padding:12px 18px;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  color:#31526a;
+  font-weight:800;
+  box-shadow:0 9px 18px rgba(40,100,140,.10);
+}
+
+.floating{
+  position:absolute;
+  z-index:1;
+  font-size:2.4rem;
+  animation:floaty 4.4s ease-in-out infinite;
+  filter:drop-shadow(0 12px 12px rgba(40,70,120,.15));
+}
+.b1{left:10%;top:27%}
+.b2{right:14%;top:30%;animation-delay:-1.3s}
+.b3{left:16%;bottom:18%;animation-delay:-2.4s}
+.b4{right:12%;bottom:20%;animation-delay:-.8s}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(3deg)}}
+
+@media (max-width:760px){
+  .page{padding:12px}
+  .hero{border-radius:32px;padding:16px;min-height:96vh}
+  .top{align-items:flex-start}
+  .pill{display:none}
+  .titleWrap{margin-top:18px}
+  .titleCloud{min-height:210px}
+  .titleCloud::after{left:54px;right:54px}
+  .grid{grid-template-columns:1fr;gap:13px}
+  .card{min-height:148px;border-radius:28px;padding:16px}
+  .gameIcon{width:62px;height:62px;border-radius:21px;font-size:2.1rem}
+  .playChip{right:14px;bottom:12px}
+  .footer{border-radius:24px}
+}
+</style>
 </head>
-
 <body>
+<main class="page">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
 
-<h1>🎮 Bharat's Game World</h1>
+  <section class="hero">
+    <span class="floating b1">🎈</span>
+    <span class="floating b2">⭐</span>
+    <span class="floating b3">🎹</span>
+    <span class="floating b4">🧩</span>
 
-<p>Choose a game and start playing!</p>
-
-<div class="games">
-
-  <a class="card" href="f1.html">
-    <div class="emoji">🏎️</div>
-    <div class="title">F1 Dash</div>
-    <div class="desc">
-      Race through traffic and become the champion.
+    <div class="titleWrap">
+      <div class="titleCloud">
+        <h1><span class="nameText">Bharat’s</span><span>Game World</span></h1>
+        <div class="subtitle">Choose one of the games below</div>
+      </div>
     </div>
-  </a>
 
-  <a class="card" href="Flagballons/">
-    <div class="emoji">🎈</div>
-    <div class="title">Flag Balloons</div>
-    <div class="desc">
-      Pop balloons and learn country flags.
-    </div>
-  </a>
+    <div class="grid">
+      <a class="card f1" href="f1.html">
+        <div class="cardTop">
+          <div class="gameIcon">🏎️</div>
+          <div>
+            <h2>F1 Dash</h2>
+            <p>Race through traffic, boost with DRS, and become the champion.</p>
+          </div>
+        </div>
+        <div class="playChip"><span class="playCircle">▶</span> Play</div>
+      </a>
 
-  <a class="card" href="puzzle/">
-    <div class="emoji">🧩</div>
-    <div class="title">Puzzle Game</div>
-    <div class="desc">
-      Solve fun puzzles for kids.
-    </div>
-  </a>
- <a class="card" href="Piano/">
-    <div class="emoji">🎹</div>
-    <div class="title">Piano Game</div>
-    <div class="desc">
-      Learn piano keys and play fun musical notes.
-    </div>
-  </a>
-</div>
+      <a class="card flags" href="Flagballons/">
+        <div class="cardTop">
+          <div class="gameIcon">🎈</div>
+          <div>
+            <h2>Flag Balloon Pop</h2>
+            <p>Pop balloons, learn country flags, capitals, and fun world facts.</p>
+          </div>
+        </div>
+        <div class="playChip"><span class="playCircle">▶</span> Play</div>
+      </a>
 
+      <a class="card puzzle" href="puzzle/">
+        <div class="cardTop">
+          <div class="gameIcon">🧩</div>
+          <div>
+            <h2>Puzzle Explorer</h2>
+            <p>Drag colorful puzzle pieces and build happy pictures.</p>
+          </div>
+        </div>
+        <div class="playChip"><span class="playCircle">▶</span> Play</div>
+      </a>
+
+      <a class="card piano" href="Piano/">
+        <div class="cardTop">
+          <div class="gameIcon">🎹</div>
+          <div>
+            <h2>Tiny Piano Adventure</h2>
+            <p>Tap colorful keys, hear notes, and start learning music.</p>
+          </div>
+        </div>
+        <div class="playChip"><span class="playCircle">▶</span> Play</div>
+      </a>
+    </div>
+
+    <div class="footer">Choose a game below. Every card opens one of your GitHub games.</div>
+  </section>
+</main>
 </body>
 </html>
