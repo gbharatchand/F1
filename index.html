@@ -243,6 +243,9 @@ h1 span{
   transform:translateY(5px);
   box-shadow:0 6px 0 rgba(62,129,42,.16),0 14px 20px rgba(40,100,52,.12);
 }
+.space{background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(238,248,255,.94));}
+.space::before{content:"";position:absolute;right:-40px;top:-45px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(115,217,255,.34),transparent 68%);z-index:1;}
+
 .card::after{
   content:"";
   position:absolute;
@@ -273,6 +276,7 @@ h1 span{
 .flags .gameIcon{background:linear-gradient(180deg,#8fea55,#3caf32)}
 .puzzle .gameIcon{background:linear-gradient(180deg,#ffd86c,#ff9d4d)}
 .piano .gameIcon{background:linear-gradient(180deg,#c6bbff,#7f6cff)}
+.space .gameIcon{background:linear-gradient(180deg,#1b2340,#101a3f);box-shadow:0 8px 0 rgba(0,0,0,.20),0 16px 22px rgba(40,70,120,.18), inset 0 -6px 0 rgba(115,217,255,.16);}
 
 .card h2{
   font-family:"Baloo 2","Fredoka",sans-serif;
@@ -338,8 +342,11 @@ h1 span{
 .b2{right:14%;top:30%;animation-delay:-1.3s}
 .b3{left:16%;bottom:18%;animation-delay:-2.4s}
 .b4{right:12%;bottom:20%;animation-delay:-.8s}
+.b5{right:24%;bottom:10%;animation-delay:-1.8s}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(3deg)}}
 
+.space{grid-column:1 / -1;}
+.space .cardTop{max-width:620px;}
 @media (max-width:760px){
   .page{padding:12px}
   .hero{border-radius:32px;padding:16px;min-height:96vh}
@@ -348,7 +355,7 @@ h1 span{
   .titleWrap{margin-top:18px}
   .titleCloud{min-height:210px}
   .titleCloud::after{left:54px;right:54px}
-  .grid{grid-template-columns:1fr;gap:13px}
+  .grid{grid-template-columns:1fr;gap:13px}.space{grid-column:auto}
   .card{min-height:148px;border-radius:28px;padding:16px}
   .gameIcon{width:62px;height:62px;border-radius:21px;font-size:2.1rem}
   .playChip{right:14px;bottom:12px}
@@ -366,6 +373,7 @@ h1 span{
     <span class="floating b2">⭐</span>
     <span class="floating b3">🎹</span>
     <span class="floating b4">🧩</span>
+    <span class="floating b5">🚀</span>
 
     <div class="titleWrap">
       <div class="titleCloud">
@@ -414,6 +422,17 @@ h1 span{
           <div>
             <h2>Tiny Piano Adventure</h2>
             <p>Tap colorful keys, hear notes, and start learning music.</p>
+          </div>
+        </div>
+        <div class="playChip"><span class="playCircle">▶</span> Play</div>
+      </a>
+
+      <a class="card space" href="SpaceExplorer/">
+        <div class="cardTop">
+          <div class="gameIcon">🚀</div>
+          <div>
+            <h2>Space Explorer</h2>
+            <p>Meet the astronaut, launch a rocket, and explore the planets.</p>
           </div>
         </div>
         <div class="playChip"><span class="playCircle">▶</span> Play</div>
