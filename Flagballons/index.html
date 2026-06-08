@@ -1956,6 +1956,42 @@
   text-align:center !important;
 }
 
+
+/* V34 center all four sections better */
+.storyPanel{
+  justify-content:center !important;
+}
+.storyStepTitle{
+  margin-bottom:10px !important;
+}
+.storyCountryName{
+  margin:0 0 12px !important;
+}
+.storyCountryFlag{
+  margin:10px 0 0 !important;
+}
+.storyMapPanel{
+  justify-content:center !important;
+}
+.storyCapitalPanel{
+  justify-content:center !important;
+}
+.storyCapitalPanel .capitalPicture{
+  margin:4px auto 8px !important;
+}
+.capitalName{
+  font-size:clamp(2rem,3.15vw,3.5rem) !important;
+}
+.storyContinent{
+  margin-top:10px !important;
+}
+.storyFactPanel{
+  justify-content:center !important;
+}
+.storyFact{
+  margin:8px 0 0 !important;
+}
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
@@ -2697,6 +2733,36 @@
     }
 
 
+
+    function closeReward(){
+      if(window.rewardIntroTimer){
+        clearTimeout(window.rewardIntroTimer);
+        window.rewardIntroTimer = null;
+      }
+
+      stopFactVideo();
+      cancelNarrationV19();
+
+      const rewardModal = $("#rewardModal");
+      const storyCard = $("#storyRewardCard");
+      if(storyCard) storyCard.classList.remove("introMode");
+      if(rewardModal) rewardModal.classList.add("hidden");
+
+      if(currentMode === "quiz"){
+        roundIndex++;
+        updateQuizHUD();
+
+        if(roundIndex >= quizOrder.length){
+          winLevel();
+        }else{
+          nextQuizRound();
+        }
+      }else{
+        // In free learning mode, just return to the floating flags.
+        showScreen("learn");
+      }
+    }
+
     function winLevel(){
       stopAnimation();
       $("#progressFill").style.width = "100%";
@@ -2741,11 +2807,55 @@
       const targetId = COUNTRY_ISO3[key];
       const sameContinent = new Set(CONTINENT_ISO3[d.continent] || []);
 
+      function normalizeFeature(feature){
+        return feature && feature.type === "Feature" ? feature : {type:"Feature", properties:{}, geometry:feature};
+      }
+
+      function getPrimaryLandmassFeature(feature){
+        if(!feature || !feature.geometry) return feature;
+        const geom = feature.geometry;
+
+        if(geom.type === "Polygon") return feature;
+
+        if(geom.type === "MultiPolygon"){
+          let best = null;
+          let bestArea = -1;
+          for(const poly of geom.coordinates){
+            const candidate = {type:"Feature", properties: feature.properties || {}, geometry:{type:"Polygon", coordinates: poly}};
+            const area = d3.geoArea(candidate);
+            if(area > bestArea){
+              bestArea = area;
+              best = candidate;
+            }
+          }
+          return best || feature;
+        }
+
+        if(geom.type === "GeometryCollection"){
+          let best = null;
+          let bestArea = -1;
+          for(const g of geom.geometries || []){
+            if(g.type !== "Polygon" && g.type !== "MultiPolygon") continue;
+            const candidate = normalizeFeature(g.type === "MultiPolygon" ? getPrimaryLandmassFeature({type:"Feature", properties: feature.properties || {}, geometry:g}) : {type:"Feature", properties: feature.properties || {}, geometry:g});
+            const area = d3.geoArea(candidate);
+            if(area > bestArea){
+              bestArea = area;
+              best = candidate;
+            }
+          }
+          return best || feature;
+        }
+
+        return feature;
+      }
+
       try{
         const features = await getWorldFeatures();
         const target = features.find(f => String(f.id).padStart(3,"0") === targetId);
         const continentFeatures = features.filter(f => sameContinent.has(String(f.id).padStart(3,"0")));
         if(!target) throw new Error("Target country not found in map data");
+
+        const primaryTarget = getPrimaryLandmassFeature(target);
 
         const width = 250, height = 175;
         svg.selectAll("*").remove();
@@ -2755,17 +2865,17 @@
 
         const worldCollection = {type:"FeatureCollection", features};
         const continentCollection = {type:"FeatureCollection", features: continentFeatures.length ? continentFeatures : [target]};
-        const countryCollection = {type:"FeatureCollection", features:[target]};
+        const countryCollection = {type:"FeatureCollection", features:[primaryTarget]};
 
         const worldProjection = d3.geoMercator().fitExtent([[8,8],[width-8,height-8]], worldCollection);
         const continentProjection = d3.geoMercator().fitExtent([[8,8],[width-8,height-8]], continentCollection);
-        const countryProjection = d3.geoMercator().fitExtent([[10,8],[width-10,height-8]], countryCollection);
+        const countryProjection = d3.geoMercator().fitExtent([[4,4],[width-4,height-4]], countryCollection);
 
         const pathWorld = d3.geoPath(worldProjection);
         const pathContinent = d3.geoPath(continentProjection);
         const pathCountry = d3.geoPath(countryProjection);
 
-        const mapState = { level: 1, minLevel: 0, maxLevel: 2 };
+        const mapState = { level: 2, minLevel: 0, maxLevel: 2 };
 
         function drawPin(layer, path, feature){
           const centroid = path.centroid(feature);
@@ -2782,7 +2892,7 @@
             .append("path")
             .attr("class", f => String(f.id).padStart(3,"0") === targetId ? "mapCountry target" : "mapCountry worldLand")
             .attr("d", pathWorld);
-          drawPin(mapLayer, pathWorld, target);
+          drawPin(mapLayer, pathWorld, primaryTarget);
         }
 
         function drawContinentView(){
@@ -2793,16 +2903,16 @@
             .append("path")
             .attr("class", f => String(f.id).padStart(3,"0") === targetId ? "mapCountry target" : "mapCountry sameContinent")
             .attr("d", pathContinent);
-          drawPin(mapLayer, pathContinent, target);
+          drawPin(mapLayer, pathContinent, primaryTarget);
         }
 
         function drawCountryView(){
           mapLayer.selectAll("*").remove();
           mapLayer.append("path")
-            .datum(target)
+            .datum(primaryTarget)
             .attr("class", "mapCountry target countryOnly")
             .attr("d", pathCountry);
-          drawPin(mapLayer, pathCountry, target);
+          drawPin(mapLayer, pathCountry, primaryTarget);
         }
 
         function renderLevel(){
@@ -3034,10 +3144,20 @@
       }
     }
 
+
+    // V35 safety: make sure the reward Next button always proceeds.
+    document.addEventListener("click", (e)=>{
+      const nextBtn = e.target.closest && e.target.closest("#nextRoundBtn");
+      if(!nextBtn) return;
+      e.preventDefault();
+      SFX.click();
+      closeReward();
+    });
+
     $("#quickQuizBtn").addEventListener("click",()=>startQuizLevel(0));
     $("#learnModeBtn").addEventListener("click",()=>{SFX.click(); audio(); showScreen("learn");});
     $("#levelsBtn").addEventListener("click",()=>{SFX.click(); buildLevels(); showScreen("level");});
-    $("#nextRoundBtn").addEventListener("click",()=>{SFX.click(); closeReward();});
+    // Next button handled by delegated V35 safety listener above.
     $("#nextLevelBtn").addEventListener("click",()=>startQuizLevel((levelIndex+1)%LEVELS.length));
     $("#replayLevelBtn").addEventListener("click",()=>startQuizLevel(levelIndex));
     $("#continentSelect").addEventListener("change",()=>{SFX.click(); startLearnMode();});
