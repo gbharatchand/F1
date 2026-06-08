@@ -564,7 +564,1399 @@
       .landingHelper{bottom:18px!important;}
     }
 
-  </style>
+  
+/* ============================================================
+   V18 kids feedback fixes
+   ============================================================ */
+.balloon{
+  width:152px !important;
+  height:202px !important;
+}
+.balloonBody{
+  left:10px !important;
+  top:0 !important;
+  width:132px !important;
+  height:156px !important;
+  border-radius:50% 50% 46% 46% !important;
+}
+.balloonBody::after{
+  left:55px !important;
+  bottom:-13px !important;
+  border-left-width:12px !important;
+  border-right-width:12px !important;
+  border-top-width:18px !important;
+}
+.string{
+  left:75px !important;
+  top:154px !important;
+  height:48px !important;
+}
+.flagBadge{
+  left:18px !important;
+  right:18px !important;
+  top:42px !important;
+  height:68px !important;
+  border-radius:16px !important;
+  font-size:3.15rem !important;
+}
+.countryTiny{
+  display:none !important;
+}
+@media (max-width:640px){
+  .balloon{
+    width:132px !important;
+    height:178px !important;
+  }
+  .balloonBody{
+    left:8px !important;
+    width:116px !important;
+    height:138px !important;
+  }
+  .balloonBody::after{
+    left:48px !important;
+  }
+  .string{
+    left:65px !important;
+    top:136px !important;
+  }
+  .flagBadge{
+    left:16px !important;
+    right:16px !important;
+    top:38px !important;
+    height:60px !important;
+    font-size:2.85rem !important;
+  }
+}
+
+
+/* ============================================================
+   V22 bigger country reveal card for kids visibility
+   - Reward card uses about 70% of desktop screen
+   - Bigger flag, title, map, country shape, fact, and buttons
+   ============================================================ */
+.modalShade{
+  padding:clamp(10px,2vw,24px) !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.rewardCard{
+  width:min(70vw,1040px) !important;
+  max-width:calc(100vw - 32px) !important;
+  max-height:92vh !important;
+  min-height:min(760px,88vh) !important;
+  border-radius:42px !important;
+  padding:clamp(24px,3.2vw,42px) !important;
+  overflow:auto !important;
+  scrollbar-width:none;
+}
+.rewardCard::-webkit-scrollbar{display:none;}
+.rewardFlag{
+  font-size:clamp(5.6rem,8vw,8rem) !important;
+  margin:0 0 12px !important;
+}
+.rewardTitle{
+  font-size:clamp(2.6rem,5.2vw,5.2rem) !important;
+  line-height:.95 !important;
+  margin:8px 0 10px !important;
+}
+.rewardMeta{
+  font-size:clamp(1.15rem,2.1vw,1.7rem) !important;
+  padding:12px 22px !important;
+  margin:10px 0 20px !important;
+  border-radius:999px !important;
+}
+.factVideoWrap{
+  width:100% !important;
+  max-width:900px !important;
+  margin:0 auto 22px !important;
+}
+.factScene{
+  height:clamp(360px,42vh,520px) !important;
+  border-radius:34px !important;
+}
+.videoBadge{
+  font-size:clamp(1rem,1.6vw,1.35rem) !important;
+  padding:10px 18px !important;
+  border-radius:999px !important;
+}
+.earthSpin{
+  width:clamp(170px,18vw,250px) !important;
+  height:clamp(170px,18vw,250px) !important;
+  font-size:clamp(7.2rem,11vw,12rem) !important;
+}
+.mapCard{
+  width:min(820px,92%) !important;
+  height:clamp(285px,32vh,390px) !important;
+  transform:translate(-50%,-43%) scale(.88) !important;
+  border-radius:36px !important;
+}
+.mapSvgWrap{
+  left:clamp(18px,2vw,30px) !important;
+  top:clamp(18px,2vw,28px) !important;
+  width:52% !important;
+  height:calc(100% - clamp(36px,4vw,56px)) !important;
+  border-radius:28px !important;
+}
+.mapSvgWrap svg{
+  transform:scale(1.04);
+  transform-origin:center;
+}
+.mapCountry.target{
+  stroke-width:3.2 !important;
+  filter:drop-shadow(0 0 12px rgba(255,79,129,.8)) !important;
+}
+.countryPinDot{
+  stroke-width:6 !important;
+}
+.countryPinRing{
+  stroke-width:5 !important;
+}
+.mapInfo{
+  left:calc(52% + clamp(42px,5vw,62px)) !important;
+  right:clamp(18px,2vw,30px) !important;
+  top:clamp(20px,2.2vw,34px) !important;
+}
+.continentLabel{
+  font-size:clamp(1rem,1.45vw,1.35rem) !important;
+  padding:9px 15px !important;
+  margin-bottom:14px !important;
+}
+.mapInfo h3{
+  font-size:clamp(2.15rem,4vw,4rem) !important;
+  line-height:.95 !important;
+  margin-bottom:16px !important;
+}
+.capitalLine{
+  font-size:clamp(1rem,1.6vw,1.45rem) !important;
+  padding:10px 16px !important;
+  border-radius:999px !important;
+}
+.miniLandmarks{
+  gap:12px !important;
+  margin-top:18px !important;
+  font-size:clamp(1.8rem,2.8vw,2.6rem) !important;
+}
+.miniLandmarks span{
+  width:clamp(48px,5.4vw,68px) !important;
+  height:clamp(48px,5.4vw,68px) !important;
+  border-radius:18px !important;
+}
+.rewardFact{
+  max-width:900px !important;
+  margin:18px auto 24px !important;
+  font-size:clamp(1.35rem,2.2vw,2.15rem) !important;
+  line-height:1.25 !important;
+  border-radius:26px !important;
+  padding:clamp(18px,2.4vw,28px) !important;
+}
+.rewardCard .buttonRow{
+  gap:18px !important;
+}
+.rewardCard .btn{
+  font-size:clamp(1.1rem,1.6vw,1.5rem) !important;
+  padding:clamp(14px,1.6vw,18px) clamp(24px,3vw,38px) !important;
+  border-radius:22px !important;
+}
+
+/* Tablet: use nearly the full screen while keeping everything readable */
+@media (max-width:900px){
+  .rewardCard{
+    width:94vw !important;
+    min-height:86vh !important;
+    max-height:94vh !important;
+    padding:22px !important;
+    border-radius:34px !important;
+  }
+  .rewardFlag{
+    font-size:5.6rem !important;
+  }
+  .rewardTitle{
+    font-size:clamp(2.5rem,8vw,4.4rem) !important;
+  }
+  .factScene{
+    height:clamp(330px,45vh,480px) !important;
+  }
+  .mapCard{
+    width:92% !important;
+    height:clamp(280px,36vh,400px) !important;
+    transform:translate(-50%,-43%) scale(.9) !important;
+  }
+}
+
+/* Phones: stack the map and info inside the map card so it does not crop */
+@media (max-width:640px){
+  .rewardCard{
+    width:96vw !important;
+    min-height:88vh !important;
+    max-height:95vh !important;
+    padding:18px !important;
+  }
+  .rewardFlag{
+    font-size:4.7rem !important;
+  }
+  .rewardMeta{
+    font-size:1rem !important;
+    padding:10px 14px !important;
+  }
+  .factScene{
+    height:430px !important;
+  }
+  .mapCard{
+    height:360px !important;
+    width:94% !important;
+    transform:translate(-50%,-44%) scale(.94) !important;
+  }
+  .mapSvgWrap{
+    left:16px !important;
+    right:16px !important;
+    top:18px !important;
+    width:auto !important;
+    height:190px !important;
+  }
+  .mapInfo{
+    left:18px !important;
+    right:18px !important;
+    top:220px !important;
+    text-align:center !important;
+  }
+  .continentLabel{
+    font-size:.95rem !important;
+    margin-bottom:8px !important;
+  }
+  .mapInfo h3{
+    font-size:2rem !important;
+    margin-bottom:8px !important;
+  }
+  .capitalLine{
+    font-size:.95rem !important;
+    padding:8px 12px !important;
+  }
+  .miniLandmarks{
+    display:none !important;
+  }
+  .rewardFact{
+    font-size:1.25rem !important;
+    padding:16px !important;
+  }
+}
+
+
+/* ============================================================
+   V23 reveal card spacing fix
+   - Prevents map info under capital from cropping
+   - Gives the country map card more vertical space
+   - Moves fun fact lower and slightly reduces font size
+   ============================================================ */
+.rewardCard{
+  min-height:min(820px,91vh) !important;
+  padding-top:clamp(20px,2.5vw,34px) !important;
+  padding-bottom:clamp(28px,3.2vw,46px) !important;
+}
+.rewardFlag{
+  font-size:clamp(5rem,7vw,7.2rem) !important;
+  margin-bottom:8px !important;
+}
+.rewardTitle{
+  font-size:clamp(2.35rem,4.7vw,4.75rem) !important;
+}
+.rewardMeta{
+  margin-bottom:24px !important;
+}
+.factVideoWrap{
+  margin-bottom:34px !important;
+}
+.factScene{
+  height:clamp(420px,48vh,585px) !important;
+  overflow:visible !important;
+}
+.mapCard{
+  height:clamp(350px,38vh,455px) !important;
+  transform:translate(-50%,-45%) scale(.88) !important;
+  overflow:hidden !important;
+}
+.mapSvgWrap{
+  height:calc(100% - 56px) !important;
+}
+.mapInfo{
+  top:clamp(22px,2vw,30px) !important;
+  bottom:24px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+}
+.continentLabel{
+  font-size:clamp(.95rem,1.3vw,1.22rem) !important;
+  margin-bottom:12px !important;
+}
+.mapInfo h3{
+  font-size:clamp(1.95rem,3.35vw,3.45rem) !important;
+  line-height:1.02 !important;
+  margin-bottom:14px !important;
+}
+.capitalLine{
+  font-size:clamp(.95rem,1.35vw,1.28rem) !important;
+  line-height:1.15 !important;
+  padding:10px 14px !important;
+  white-space:normal !important;
+}
+.miniLandmarks{
+  margin-top:18px !important;
+  gap:10px !important;
+  font-size:clamp(1.55rem,2.25vw,2.15rem) !important;
+  flex-wrap:wrap !important;
+}
+.miniLandmarks span{
+  width:clamp(44px,4.6vw,60px) !important;
+  height:clamp(44px,4.6vw,60px) !important;
+  flex:0 0 auto !important;
+}
+.rewardFact{
+  margin-top:30px !important;
+  margin-bottom:26px !important;
+  font-size:clamp(1.15rem,1.85vw,1.75rem) !important;
+  line-height:1.28 !important;
+  padding:clamp(16px,2vw,24px) !important;
+}
+.rewardCard .buttonRow{
+  margin-top:18px !important;
+}
+
+/* Tablet adjustments */
+@media (max-width:900px){
+  .rewardCard{
+    min-height:90vh !important;
+  }
+  .factScene{
+    height:clamp(430px,52vh,560px) !important;
+  }
+  .mapCard{
+    height:clamp(355px,42vh,470px) !important;
+  }
+  .rewardFact{
+    font-size:clamp(1.1rem,3vw,1.55rem) !important;
+    margin-top:34px !important;
+  }
+}
+
+/* Phone adjustments */
+@media (max-width:640px){
+  .factVideoWrap{
+    margin-bottom:28px !important;
+  }
+  .factScene{
+    height:470px !important;
+  }
+  .mapCard{
+    height:395px !important;
+    transform:translate(-50%,-45%) scale(.94) !important;
+  }
+  .mapSvgWrap{
+    height:190px !important;
+  }
+  .mapInfo{
+    top:222px !important;
+    bottom:18px !important;
+  }
+  .mapInfo h3{
+    font-size:1.85rem !important;
+  }
+  .capitalLine{
+    font-size:.9rem !important;
+    line-height:1.15 !important;
+  }
+  .rewardFact{
+    margin-top:34px !important;
+    font-size:1.1rem !important;
+    line-height:1.3 !important;
+  }
+}
+
+
+/* ============================================================
+   V24 map info layout + no-scroll reveal screen
+   - Continent label text only: "Continent: South America"
+   - Flag bigger and on its own line
+   - Country name on next line
+   - Entire reveal fits one screen; Next button remains visible
+   ============================================================ */
+.rewardCard{
+  height:min(92vh,880px) !important;
+  min-height:0 !important;
+  max-height:92vh !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  padding:clamp(16px,2.2vw,28px) !important;
+}
+.rewardFlag{
+  flex:0 0 auto !important;
+  font-size:clamp(4.2rem,5.8vw,6.4rem) !important;
+  margin:0 0 6px !important;
+}
+.rewardTitle{
+  flex:0 0 auto !important;
+  font-size:clamp(2.1rem,4.1vw,4.1rem) !important;
+  margin:4px 0 6px !important;
+}
+.rewardMeta{
+  flex:0 0 auto !important;
+  font-size:clamp(1rem,1.55vw,1.35rem) !important;
+  padding:9px 16px !important;
+  margin:6px 0 14px !important;
+}
+.factVideoWrap{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:clamp(300px,42vh,430px) !important;
+  margin:0 auto 14px !important;
+  width:100% !important;
+  max-width:920px !important;
+}
+.factScene{
+  height:100% !important;
+  min-height:0 !important;
+  border-radius:30px !important;
+  overflow:hidden !important;
+}
+.mapCard{
+  width:min(840px,92%) !important;
+  height:clamp(280px,34vh,380px) !important;
+  transform:translate(-50%,-45%) scale(.88) !important;
+  border-radius:34px !important;
+}
+.mapSvgWrap{
+  left:clamp(16px,1.8vw,26px) !important;
+  top:clamp(16px,1.8vw,24px) !important;
+  width:51% !important;
+  height:calc(100% - clamp(32px,3.6vw,48px)) !important;
+}
+.mapInfo{
+  left:calc(51% + clamp(42px,4.4vw,58px)) !important;
+  right:clamp(16px,1.8vw,26px) !important;
+  top:clamp(16px,1.8vw,24px) !important;
+  bottom:clamp(14px,1.8vw,24px) !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  text-align:left !important;
+}
+.continentLabel{
+  gap:0 !important;
+  font-size:clamp(.9rem,1.2vw,1.12rem) !important;
+  padding:8px 14px !important;
+  margin-bottom:10px !important;
+  width:max-content !important;
+  max-width:100% !important;
+}
+.mapCountryFlag{
+  font-size:clamp(3rem,4.6vw,4.7rem) !important;
+  line-height:1 !important;
+  margin:0 0 8px !important;
+  filter:drop-shadow(0 6px 8px rgba(31,85,142,.14));
+}
+.mapInfo h3{
+  font-size:clamp(2rem,3.4vw,3.7rem) !important;
+  line-height:.95 !important;
+  margin:0 0 12px !important;
+}
+.capitalLine{
+  font-size:clamp(.92rem,1.25vw,1.2rem) !important;
+  line-height:1.15 !important;
+  padding:9px 14px !important;
+  white-space:normal !important;
+  width:fit-content !important;
+  max-width:100% !important;
+}
+.miniLandmarks{
+  margin-top:14px !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+  font-size:clamp(1.35rem,2vw,2rem) !important;
+}
+.miniLandmarks span{
+  width:clamp(42px,4.2vw,56px) !important;
+  height:clamp(42px,4.2vw,56px) !important;
+}
+.rewardFact{
+  flex:0 0 auto !important;
+  max-width:920px !important;
+  margin:8px auto 14px !important;
+  font-size:clamp(1.05rem,1.55vw,1.45rem) !important;
+  line-height:1.25 !important;
+  padding:clamp(13px,1.6vw,18px) !important;
+  border-radius:22px !important;
+}
+.rewardCard > .buttonRow{
+  flex:0 0 auto !important;
+  margin-top:4px !important;
+  gap:14px !important;
+}
+.rewardCard .btn{
+  font-size:clamp(1rem,1.35vw,1.25rem) !important;
+  padding:clamp(12px,1.35vw,16px) clamp(20px,2.3vw,30px) !important;
+  border-radius:20px !important;
+}
+
+/* Tablet/smaller screens: keep all controls visible */
+@media (max-width:900px){
+  .rewardCard{
+    width:95vw !important;
+    height:93vh !important;
+    max-height:93vh !important;
+    padding:16px !important;
+  }
+  .factVideoWrap{
+    height:clamp(300px,43vh,410px) !important;
+    margin-bottom:12px !important;
+  }
+  .mapCard{
+    height:clamp(285px,36vh,390px) !important;
+  }
+  .rewardFact{
+    font-size:clamp(1rem,2.4vw,1.32rem) !important;
+    margin-bottom:10px !important;
+  }
+}
+
+/* Phone: stack map and info but keep Next visible */
+@media (max-width:640px){
+  .rewardCard{
+    height:94vh !important;
+    max-height:94vh !important;
+    padding:14px !important;
+  }
+  .rewardFlag{
+    font-size:3.8rem !important;
+    margin-bottom:4px !important;
+  }
+  .rewardTitle{
+    font-size:2.15rem !important;
+  }
+  .rewardMeta{
+    font-size:.9rem !important;
+    padding:8px 12px !important;
+    margin-bottom:10px !important;
+  }
+  .factVideoWrap{
+    height:390px !important;
+    margin-bottom:10px !important;
+  }
+  .mapCard{
+    height:335px !important;
+    width:94% !important;
+    transform:translate(-50%,-45%) scale(.94) !important;
+  }
+  .mapSvgWrap{
+    left:14px !important;
+    right:14px !important;
+    top:16px !important;
+    width:auto !important;
+    height:158px !important;
+  }
+  .mapInfo{
+    left:16px !important;
+    right:16px !important;
+    top:188px !important;
+    bottom:14px !important;
+    text-align:center !important;
+    align-items:center !important;
+  }
+  .continentLabel{
+    font-size:.82rem !important;
+    margin-bottom:6px !important;
+  }
+  .mapCountryFlag{
+    font-size:2.4rem !important;
+    margin-bottom:4px !important;
+  }
+  .mapInfo h3{
+    font-size:1.75rem !important;
+    margin-bottom:6px !important;
+  }
+  .capitalLine{
+    font-size:.82rem !important;
+    padding:7px 10px !important;
+  }
+  .miniLandmarks{
+    display:none !important;
+  }
+  .rewardFact{
+    font-size:.98rem !important;
+    line-height:1.24 !important;
+    padding:12px !important;
+    margin:8px auto 8px !important;
+  }
+  .rewardCard .btn{
+    font-size:.95rem !important;
+    padding:10px 16px !important;
+  }
+}
+
+
+/* ============================================================
+   V25 Story Flow country reveal
+   Approved layout: Country -> Zoomed Map -> Capital -> Fun fact
+   No repeated data, no globe zoom animation, Next always visible.
+   ============================================================ */
+.storyRewardCard{
+  width:min(96vw,1240px) !important;
+  height:min(92vh,820px) !important;
+  max-height:92vh !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+  padding:clamp(14px,1.8vw,24px) clamp(18px,2.4vw,32px) !important;
+  border-radius:42px !important;
+  background:linear-gradient(180deg,#ffffff 0%,#f7fcff 78%,#e8fbff 100%) !important;
+}
+.storyHeader{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:6px;
+  text-align:left;
+}
+.storyBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:9px 18px;
+  border-radius:18px;
+  color:#fff;
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  font-size:clamp(1.35rem,2.4vw,2.25rem);
+  line-height:1;
+  background:linear-gradient(180deg,#c052ff,#8b19db);
+  box-shadow:0 6px 0 #6412a1,0 12px 18px rgba(82,30,150,.22);
+}
+.storyHeading{
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  color:#0e315b;
+  font-size:clamp(1.8rem,3.2vw,3rem);
+  line-height:1;
+  font-weight:800;
+}
+.storyHeading span{font-size:.86em;}
+.storyFlowLine{
+  flex:0 0 auto;
+  position:relative;
+  height:70px;
+  margin:0 3% 0 3%;
+}
+.storyFlowLine::before{
+  content:"";
+  position:absolute;
+  left:7%;
+  right:7%;
+  top:32px;
+  border-top:4px dashed #2296e8;
+}
+.storyFlowLine::after{
+  content:"";
+  position:absolute;
+  left:69%;
+  right:7%;
+  top:32px;
+  border-top:4px dashed #a438f2;
+}
+.stepDot{
+  position:absolute;
+  top:3px;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  font-size:2.3rem;
+  font-weight:900;
+  box-shadow:inset 0 6px 0 rgba(255,255,255,.22),0 7px 0 rgba(0,0,0,.15),0 14px 18px rgba(30,80,140,.18);
+  z-index:2;
+}
+.stepDot1{left:4%;background:linear-gradient(180deg,#ffd84d,#f7a80c);}
+.stepDot2{left:31%;background:linear-gradient(180deg,#52d5ff,#0d83d8);}
+.stepDot3{left:58%;background:linear-gradient(180deg,#87ef45,#36ac20);}
+.stepDot4{right:4%;background:linear-gradient(180deg,#d95cff,#8c22e8);}
+.storyGrid{
+  flex:1 1 auto;
+  min-height:0;
+  display:grid;
+  grid-template-columns:1.05fr 1.35fr .9fr 1.02fr;
+  gap:0;
+  align-items:stretch;
+  background:rgba(255,255,255,.78);
+  border-radius:34px;
+  box-shadow:inset 0 0 0 3px rgba(210,236,255,.6);
+  overflow:hidden;
+  position:relative;
+}
+.storyGrid::after{
+  content:"";
+  position:absolute;
+  left:-6%;
+  right:-6%;
+  bottom:-12%;
+  height:30%;
+  border-radius:50% 50% 0 0;
+  background:linear-gradient(180deg,#9fe577,#54c947);
+  opacity:.75;
+  z-index:0;
+}
+.storyPanel{
+  position:relative;
+  z-index:1;
+  padding:clamp(16px,2vw,26px);
+  border-right:3px dashed rgba(100,180,230,.35);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:center;
+  min-width:0;
+}
+.storyPanel:last-child{border-right:0;}
+.storyStepTitle{
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  color:#111c55;
+  font-size:clamp(1.45rem,2.25vw,2.25rem);
+  line-height:1;
+  font-weight:900;
+  margin-bottom:12px;
+}
+.storyCountryName{
+  color:#174ab6 !important;
+  font-size:clamp(2.7rem,5vw,5rem) !important;
+  line-height:.92 !important;
+  margin:0 0 18px !important;
+}
+.storyCountryFlag{
+  font-size:clamp(7rem,10vw,11rem) !important;
+  line-height:1 !important;
+  margin:auto 0 26px !important;
+  filter:drop-shadow(0 14px 16px rgba(31,85,142,.18));
+}
+.storyMapPanel{
+  padding-left:clamp(14px,1.6vw,22px);
+  padding-right:clamp(14px,1.6vw,22px);
+}
+.storyMapWrap{
+  width:100% !important;
+  max-width:none !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  margin:0 !important;
+}
+.storyMapScene{
+  width:100%;
+  height:100% !important;
+  min-height:0 !important;
+  border-radius:26px !important;
+  overflow:hidden !important;
+  background:linear-gradient(180deg,#bdefff,#eaffff 60%,#b8ec8a) !important;
+}
+.storyRealMapJourney{
+  inset:0 !important;
+}
+.storyRealMapJourney::after{
+  display:none !important;
+}
+.earthSpin{
+  display:none !important;
+}
+.storyOnlyMapCard{
+  width:100% !important;
+  height:100% !important;
+  left:0 !important;
+  top:0 !important;
+  transform:none !important;
+  opacity:1 !important;
+  animation:storyMapIn .55s ease both !important;
+  border-radius:26px !important;
+  box-shadow:inset 0 0 0 5px rgba(255,255,255,.68),0 12px 20px rgba(31,85,142,.12) !important;
+}
+.storyOnlyMapCard::before{
+  background:linear-gradient(180deg,#dff8ff,#eaf8ff) !important;
+}
+.storyOnlyMapSvg{
+  left:0 !important;
+  top:0 !important;
+  width:100% !important;
+  height:100% !important;
+  border-radius:26px !important;
+  box-shadow:none !important;
+  background:#dff5ff !important;
+}
+.storyOnlyMapSvg svg{
+  width:100%;
+  height:100%;
+  display:block;
+  transform:none !important;
+  transform-origin:center !important;
+}
+.storyOnlyMapSvg .mapLoading{
+  font-size:1.1rem;
+}
+.mapCountry.target{
+  stroke-width:3.4 !important;
+  filter:drop-shadow(0 0 12px rgba(255,79,129,.85)) !important;
+}
+.countryPinDot{stroke-width:6 !important;}
+.countryPinRing{stroke-width:5 !important;}
+@keyframes storyMapIn{
+  from{opacity:0;transform:scale(.94);}
+  to{opacity:1;transform:scale(1);}
+}
+.capitalPicture{
+  font-size:clamp(5.8rem,8vw,8.5rem);
+  line-height:1;
+  margin:auto 0 12px;
+  filter:drop-shadow(0 12px 14px rgba(60,90,130,.16));
+}
+.capitalName{
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  color:#174ab6;
+  font-size:clamp(2.6rem,4.6vw,4.7rem);
+  line-height:.95;
+  font-weight:900;
+}
+.storyContinent{
+  margin-top:16px;
+  padding:9px 14px;
+  border-radius:999px;
+  background:#fff4d9;
+  color:#925f10;
+  font-size:clamp(.9rem,1.2vw,1.12rem);
+  font-weight:900;
+}
+.storyFactPanel{
+  align-items:center;
+  padding-right:clamp(10px,1.2vw,18px);
+}
+.storyFact{
+  background:transparent !important;
+  padding:0 !important;
+  margin:20px 0 0 !important;
+  color:#101a3f !important;
+  font-size:clamp(1.45rem,2.25vw,2.25rem) !important;
+  line-height:1.36 !important;
+  font-weight:900 !important;
+  max-width:100% !important;
+}
+.bulb{font-size:.9em;}
+.storyBoy{
+  position:absolute;
+  right:2px;
+  bottom:-6px;
+  width:126px;
+  height:164px;
+  transform:scale(1);
+  transform-origin:bottom right;
+  z-index:2;
+}
+.boyHead{
+  position:absolute;
+  right:16px;
+  top:14px;
+  width:82px;
+  height:82px;
+  border-radius:50%;
+  background:radial-gradient(circle at 34% 35%,#fff 0 6%,transparent 7%),linear-gradient(135deg,#ffd1a3,#f28d55);
+  box-shadow:inset -7px -7px 0 rgba(175,80,40,.14),0 9px 12px rgba(80,50,30,.16);
+}
+.boyHead::before,.boyHead::after{
+  content:"";
+  position:absolute;
+  top:34px;
+  width:11px;
+  height:14px;
+  border-radius:50%;
+  background:#2c1b17;
+}
+.boyHead::before{left:23px;}
+.boyHead::after{right:24px;}
+.boyHair{
+  position:absolute;
+  right:20px;
+  top:0;
+  width:86px;
+  height:46px;
+  border-radius:60% 60% 45% 45%;
+  background:linear-gradient(135deg,#8a4217,#4b220f);
+  z-index:2;
+}
+.boyHair::after{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:18px;
+  width:72px;
+  height:22px;
+  border-radius:50%;
+  background:#6b2f12;
+}
+.boyBody{
+  position:absolute;
+  right:28px;
+  bottom:16px;
+  width:60px;
+  height:78px;
+  border-radius:20px 20px 14px 14px;
+  background:linear-gradient(180deg,#ff5d2e,#d92d1e);
+  box-shadow:inset -7px -7px 0 rgba(100,20,20,.18),0 8px 12px rgba(80,50,30,.16);
+}
+.boyArm{
+  position:absolute;
+  right:78px;
+  top:70px;
+  width:60px;
+  height:18px;
+  border-radius:999px;
+  background:#f6a06b;
+  transform:rotate(-45deg);
+  transform-origin:right center;
+}
+.boyArm::after{
+  content:"";
+  position:absolute;
+  left:-6px;
+  top:-7px;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#ffd1a3;
+}
+.boyBag{
+  position:absolute;
+  right:10px;
+  bottom:42px;
+  width:34px;
+  height:72px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#24a3ff,#0d5da8);
+  z-index:0;
+}
+.boyLegs{
+  position:absolute;
+  right:34px;
+  bottom:0;
+  width:48px;
+  height:26px;
+  border-radius:0 0 16px 16px;
+  background:#214b8b;
+}
+.storyActions{
+  flex:0 0 auto;
+  margin-top:14px !important;
+  gap:28px !important;
+  justify-content:center !important;
+}
+.storyActions .btn{
+  font-size:clamp(1.35rem,2.2vw,2.1rem) !important;
+  padding:clamp(13px,1.7vw,19px) clamp(34px,4vw,58px) !important;
+  border-radius:24px !important;
+}
+.storyActions .btn.small{
+  font-size:clamp(1rem,1.5vw,1.35rem) !important;
+  padding:clamp(12px,1.4vw,16px) clamp(24px,3vw,40px) !important;
+}
+
+/* Responsive tablet: keep story flow visible in one screen */
+@media (max-width:980px){
+  .storyRewardCard{
+    width:97vw !important;
+    height:94vh !important;
+    padding:12px !important;
+    border-radius:32px !important;
+  }
+  .storyHeader{gap:10px;margin-bottom:2px;}
+  .storyFlowLine{height:54px;margin:0 2%;}
+  .stepDot{width:48px;height:48px;font-size:1.7rem;}
+  .storyGrid{
+    grid-template-columns:1fr 1.25fr .9fr 1fr;
+    border-radius:26px;
+  }
+  .storyPanel{padding:12px 10px;}
+  .storyCountryFlag{font-size:5.5rem !important;}
+  .storyCountryName{font-size:2.7rem !important;}
+  .capitalPicture{font-size:4.8rem;}
+  .capitalName{font-size:2.5rem;}
+  .storyFact{font-size:1.28rem !important;}
+  .storyBoy{transform:scale(.78);right:-6px;}
+  .storyOnlyMapSvg svg{transform:none !important;}
+  .storyActions{margin-top:10px !important;}
+}
+
+/* Phone: vertical step cards but next still visible */
+@media (max-width:640px){
+  .storyRewardCard{
+    height:94vh !important;
+    max-height:94vh !important;
+    padding:10px !important;
+  }
+  .storyHeader{
+    justify-content:center;
+    text-align:center;
+  }
+  .storyBadge{font-size:1.1rem;padding:7px 12px;border-radius:14px;}
+  .storyHeading{font-size:1.35rem;}
+  .storyFlowLine{display:none;}
+  .storyGrid{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:32% 36% 32%;
+    gap:0;
+  }
+  .storyCountryPanel{grid-column:1;grid-row:1;}
+  .storyMapPanel{grid-column:2;grid-row:1 / 3;}
+  .storyCapitalPanel{grid-column:1;grid-row:2;}
+  .storyFactPanel{grid-column:1 / -1;grid-row:3;}
+  .storyPanel{padding:8px;}
+  .storyStepTitle{font-size:1.05rem;margin-bottom:6px;}
+  .storyCountryName{font-size:1.8rem !important;margin-bottom:4px !important;}
+  .storyCountryFlag{font-size:3.8rem !important;margin:0 !important;}
+  .capitalPicture{font-size:3.1rem;margin:0 0 3px;}
+  .capitalName{font-size:1.7rem;}
+  .storyContinent{font-size:.72rem;padding:6px 9px;margin-top:6px;}
+  .storyFact{font-size:1rem !important;line-height:1.22 !important;margin-top:4px !important;padding-right:68px !important;}
+  .storyBoy{transform:scale(.55);right:-16px;bottom:-26px;}
+  .storyOnlyMapSvg svg{transform:none !important;}
+  .storyActions{
+    margin-top:8px !important;
+    gap:10px !important;
+  }
+  .storyActions .btn{
+    font-size:1rem !important;
+    padding:10px 20px !important;
+    border-radius:18px !important;
+  }
+  .storyActions .btn.small{
+    font-size:.86rem !important;
+    padding:10px 14px !important;
+  }
+}
+
+
+/* V26 clean info card + 2s globe intro + improved boy */
+.storyHeader,
+.storyFlowLine{
+  display:none !important;
+}
+.storyRewardCard{
+  position:relative;
+  overflow:hidden !important;
+  padding:18px 22px 18px !important;
+}
+.storyGrid{
+  height:calc(100% - 84px) !important;
+  margin-top:0 !important;
+}
+.storyActions{
+  margin-top:12px !important;
+}
+.storyRewardCard.introMode .storyGrid,
+.storyRewardCard.introMode .storyActions{
+  opacity:0;
+  pointer-events:none;
+}
+.storyRewardCard:not(.introMode) .storyIntro{
+  opacity:0;
+  pointer-events:none;
+}
+.storyIntro{
+  position:absolute;
+  inset:18px 22px 82px 22px;
+  border-radius:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255,255,255,.92) 0 3%, transparent 4%),
+    radial-gradient(circle at 78% 20%, rgba(255,255,255,.8) 0 3%, transparent 4%),
+    radial-gradient(circle at 62% 14%, rgba(255,223,92,.65) 0 4%, transparent 5%),
+    linear-gradient(180deg,#d4f2ff 0%, #f7fdff 58%, #c6f09a 100%);
+  box-shadow:inset 0 0 0 3px rgba(210,236,255,.6);
+  z-index:5;
+  transition:opacity .35s ease;
+}
+.introGlobeWrap{position:relative;width:min(34vw,280px);height:min(34vw,280px);display:grid;place-items:center;}
+.introGlobe{
+  width:72%;height:72%;border-radius:50%;display:grid;place-items:center;
+  font-size:clamp(5rem,8vw,8rem);
+  background:radial-gradient(circle at 34% 30%, #ffffff 0 12%, #60d6ff 13%, #1687e8 54%, #0a4da2 100%);
+  box-shadow:0 18px 26px rgba(30,80,140,.18), inset -12px -12px 0 rgba(7,52,108,.18);
+  animation:introGlobeSpin 2s linear infinite;
+}
+.introGlobe::before{
+  content:"";position:absolute;width:58%;height:58%;border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 45%, #7cdc5d 0 18%, transparent 19%),
+    radial-gradient(circle at 62% 58%, #88df67 0 16%, transparent 17%),
+    radial-gradient(circle at 55% 30%, #68cf57 0 11%, transparent 12%);
+  opacity:.7;filter:blur(.4px);
+}
+.orbit1,.orbit2{
+  position:absolute;inset:10% 2%;border:4px dashed rgba(70,153,231,.38);border-radius:50%;
+}
+.orbit1{transform:rotate(18deg);}
+.orbit2{transform:rotate(-18deg);}
+.introSpark{
+  position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,.95);animation:introTwinkle 1.2s ease-in-out infinite alternate;
+}
+.spark1{left:18%;top:24%;}
+.spark2{right:22%;top:30%;animation-delay:.25s;}
+.spark3{left:50%;bottom:18%;animation-delay:.45s;}
+.introText{
+  font-family:"Baloo 2","Fredoka",sans-serif;font-size:clamp(1.4rem,2.2vw,2.1rem);color:#123763;font-weight:800;
+}
+@keyframes introGlobeSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes introTwinkle{from{transform:scale(.7);opacity:.55;}to{transform:scale(1.15);opacity:1;}}
+
+.storyOnlyMapSvg svg{transform:none !important;transform-origin:center !important;}
+@media (max-width:980px){ .storyOnlyMapSvg svg{transform:none !important;} }
+@media (max-width:640px){ .storyOnlyMapSvg svg{transform:none !important;} }
+
+.storyFactPanel{overflow:hidden;}
+.storyBoy,
+.boyHead,.boyHair,.boyBody,.boyArm,.boyBag,.boyLegs{display:none !important;}
+.storyBoy2{
+  position:absolute;right:6px;bottom:-2px;width:148px;height:188px;z-index:2;pointer-events:none;
+}
+.boy2Shadow{position:absolute;right:10px;bottom:6px;width:96px;height:18px;border-radius:50%;background:rgba(30,60,90,.12);}
+.boy2Bag{position:absolute;right:6px;top:64px;width:46px;height:84px;border-radius:18px 20px 16px 16px;background:linear-gradient(180deg,#2fb1ff,#1569c9);box-shadow:inset -7px -8px 0 rgba(6,55,112,.18);}
+.boy2Body{position:absolute;right:34px;top:82px;width:62px;height:76px;border-radius:22px 22px 16px 16px;background:linear-gradient(180deg,#ff6335,#e33a20);box-shadow:inset -8px -8px 0 rgba(118,25,16,.16);}
+.boy2Neck{position:absolute;right:58px;top:72px;width:14px;height:18px;border-radius:8px;background:#ffc18e;}
+.boy2Head{position:absolute;right:34px;top:16px;width:74px;height:74px;border-radius:50%;background:linear-gradient(180deg,#ffd4ab,#f5a26f);box-shadow:inset -7px -7px 0 rgba(175,80,40,.12);}
+.boy2Head::before,.boy2Head::after{content:"";position:absolute;top:34px;width:9px;height:12px;border-radius:50%;background:#2b221f;}
+.boy2Head::before{left:22px;}
+.boy2Head::after{right:22px;}
+.boy2Hair{position:absolute;right:28px;top:2px;width:86px;height:34px;border-radius:52px 52px 18px 18px;background:linear-gradient(180deg,#6d3816,#4d250e);z-index:3;}
+.boy2Hair::after{content:"";position:absolute;left:10px;top:12px;width:64px;height:16px;border-radius:14px 40px 8px 8px;background:#5f2c12;transform:rotate(-4deg);}
+.boy2Ear{position:absolute;right:28px;top:42px;width:12px;height:18px;border-radius:10px;background:#f7b07d;}
+.boy2Arm{position:absolute;height:18px;border-radius:999px;background:#ffc08b;}
+.boy2ArmBack{right:18px;top:92px;width:38px;transform:rotate(24deg);}
+.boy2ArmFront{right:84px;top:96px;width:46px;transform:rotate(-28deg);}
+.boy2ArmFront::after,.boy2ArmBack::after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#ffd4ab;top:-2px;}
+.boy2ArmFront::after{left:-4px;}
+.boy2ArmBack::after{right:-4px;}
+.boy2Leg{position:absolute;width:18px;height:54px;border-radius:12px;background:linear-gradient(180deg,#2b57a7,#1f4484);top:146px;}
+.boy2LegLeft{right:62px;transform:rotate(6deg);}
+.boy2LegRight{right:40px;transform:rotate(-6deg);}
+.boy2Shoe{position:absolute;width:28px;height:14px;border-radius:12px 12px 8px 8px;background:#1a2447;top:192px;}
+.boy2ShoeLeft{right:54px;}
+.boy2ShoeRight{right:26px;}
+
+@media (max-width:980px){
+  .storyRewardCard{padding:14px 14px 14px !important;}
+  .storyIntro{inset:14px 14px 76px 14px;}
+  .storyGrid{height:calc(100% - 76px) !important;}
+  .storyBoy2{transform:scale(.82);transform-origin:bottom right;right:-8px;}
+}
+@media (max-width:640px){
+  .storyRewardCard{padding:10px !important;}
+  .storyIntro{inset:10px 10px 70px 10px;border-radius:24px;}
+  .introGlobeWrap{width:min(58vw,220px);height:min(58vw,220px);}
+  .introText{font-size:1.05rem;}
+  .storyGrid{height:calc(100% - 68px) !important;}
+  .storyBoy2{transform:scale(.58);transform-origin:bottom right;right:-20px;bottom:-18px;}
+}
+
+
+/* V27 layout fit fixes: keep capital text inside panel, remove boy, reduce sizes slightly */
+.storyStepTitle{
+  font-size:clamp(1.32rem,2.05vw,2.05rem) !important;
+}
+.storyCountryName{
+  font-size:clamp(2.45rem,4.45vw,4.7rem) !important;
+  line-height:.96 !important;
+}
+.storyCountryFlag{
+  font-size:clamp(6.5rem,9vw,10rem) !important;
+}
+.storyCapitalPanel{
+  overflow:hidden;
+  padding-left:clamp(10px,1.4vw,18px) !important;
+  padding-right:clamp(10px,1.4vw,18px) !important;
+}
+.capitalPicture{
+  font-size:clamp(4.9rem,6.2vw,7.1rem) !important;
+  margin:auto 0 10px !important;
+}
+.capitalName{
+  font-size:clamp(2.15rem,3.35vw,3.75rem) !important;
+  line-height:1.02 !important;
+  text-align:center !important;
+  max-width:100% !important;
+  overflow-wrap:anywhere !important;
+  word-break:break-word !important;
+}
+.storyContinent{
+  margin-top:12px !important;
+  font-size:clamp(.85rem,1.05vw,1.02rem) !important;
+  padding:8px 12px !important;
+}
+.storyFact{
+  font-size:clamp(1.28rem,1.95vw,2.05rem) !important;
+  line-height:1.3 !important;
+}
+.storyBoy2,
+.storyBoy{
+  display:none !important;
+}
+@media (max-width:980px){
+  .storyCountryName{font-size:2.5rem !important;}
+  .capitalName{font-size:2.2rem !important;}
+  .storyFact{font-size:1.18rem !important;}
+}
+@media (max-width:640px){
+  .storyCountryName{font-size:1.65rem !important;}
+  .capitalName{font-size:1.5rem !important;}
+  .storyFact{font-size:.95rem !important;}
+}
+
+
+/* V29 interactive country map fixes */
+.storyOnlyMapSvg svg{
+  transform:none !important;
+  cursor:grab;
+}
+.storyOnlyMapSvg svg:active{
+  cursor:grabbing;
+}
+.mapCountry.worldLand{
+  fill:#9bdc8d;
+  stroke:#fff;
+  stroke-width:.45;
+  opacity:.9;
+}
+.interactiveMapLayer{
+  transform-origin:center;
+  transition:transform .28s ease;
+}
+.mapZoomHint{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.88);
+  color:#17406b;
+  font-size:.82rem;
+  font-weight:900;
+  box-shadow:0 6px 12px rgba(31,85,142,.12);
+  pointer-events:none;
+}
+.storyOnlyMapCard::after{
+  content:"Swipe up to zoom in • drag to pan • swipe down for world map";
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.88);
+  color:#17406b;
+  font-size:clamp(.65rem,.85vw,.82rem);
+  font-weight:900;
+  box-shadow:0 6px 12px rgba(31,85,142,.12);
+  white-space:nowrap;
+  z-index:5;
+}
+
+
+/* V31 zoom controls + 3-step map views */
+.mapZoomControls{
+  position:absolute;
+  right:10px;
+  top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  z-index:8;
+}
+.mapZoomBtn{
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(180deg,#ffffff,#e8f5ff);
+  color:#174ab6;
+  font-family:"Baloo 2","Fredoka",sans-serif;
+  font-size:1.9rem;
+  line-height:1;
+  font-weight:900;
+  box-shadow:0 8px 16px rgba(27,84,155,.18), inset 0 -3px 0 rgba(22,72,141,.12);
+  cursor:pointer;
+}
+.mapZoomBtn:disabled{
+  opacity:.45;
+  cursor:default;
+}
+.mapZoomBtn:not(:disabled):hover{
+  transform:translateY(-1px);
+}
+.mapCountry.offRegion{
+  fill:#d9eef2;
+  stroke:#ffffff;
+  stroke-width:.35;
+  opacity:.95;
+}
+.mapCountry.sameContinent{
+  fill:#9bdc8d;
+  stroke:#ffffff;
+  stroke-width:.55;
+  opacity:.96;
+}
+.mapCountry.countryOnly{
+  fill:#ff5a91;
+  stroke:#ffffff;
+  stroke-width:2.8;
+  filter:drop-shadow(0 0 12px rgba(255,79,129,.8));
+}
+.storyOnlyMapCard::after{
+  content:"Use + / − • swipe or wheel to change map view";
+}
+
+
+/* V33 cleanup */
+.storyFact::before,
+#rewardFact::before{
+  content:none !important;
+}
+.storyOnlyMapSvg{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.storyOnlyMapSvg svg,
+#realCountryMap{
+  display:block !important;
+  margin:auto !important;
+}
+.storyCapitalPanel{
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+.storyCapitalPanel .capitalPicture{
+  display:block;
+  margin:6px auto 12px !important;
+  text-align:center !important;
+  align-self:center !important;
+}
+.storyCapitalPanel .capitalName,
+.storyCapitalPanel .storyContinent{
+  text-align:center !important;
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 </head>
@@ -653,16 +2045,65 @@
     </section>
 
     <div class="modalShade hidden" id="rewardModal">
-      <div class="rewardCard">
-        <div class="rewardFlag" id="rewardFlag">🇺🇸</div>
-        <div class="rewardTitle" id="rewardTitle">United States</div>
-        <div class="rewardMeta" id="rewardMeta">Capital: Washington, D.C. • North America</div>
-        <div class="factVideoWrap">
-          <div id="factScene" class="factScene theme-world" aria-label="Animated fun fact scene"></div>
-          <div class="videoBadge">Real country map</div>
+      <div class="rewardCard storyRewardCard introMode" id="storyRewardCard">
+        <div class="storyIntro" id="storyIntro">
+          <div class="introGlobeWrap">
+            <div class="introGlobe">🌍</div>
+            <div class="introOrbit orbit1"></div>
+            <div class="introOrbit orbit2"></div>
+            <div class="introSpark spark1"></div>
+            <div class="introSpark spark2"></div>
+            <div class="introSpark spark3"></div>
+          </div>
+          <div class="introText">Finding it on the world map...</div>
         </div>
-        <div class="rewardFact" id="rewardFact">Here is a fun fact!</div>
-        <div class="buttonRow" style="margin-top:8px;"><button class="btn" id="nextRoundBtn">Next ▶</button><button class="btn small" data-action="repeatFact">🔊 Hear Again</button></div>
+
+        <div class="storyGrid" id="storyGrid">
+          <section class="storyPanel storyCountryPanel">
+            <div class="storyStepTitle">This is</div>
+            <div class="rewardTitle storyCountryName" id="rewardTitle">United States</div>
+            <div class="rewardFlag storyCountryFlag" id="rewardFlag">🇺🇸</div>
+          </section>
+
+          <section class="storyPanel storyMapPanel">
+            <div class="storyStepTitle">Here it is!</div>
+            <div class="factVideoWrap storyMapWrap">
+              <div id="factScene" class="factScene storyMapScene" aria-label="Real country map with highlighted country"></div>
+            </div>
+          </section>
+
+          <section class="storyPanel storyCapitalPanel">
+            <div class="storyStepTitle">Capital</div>
+            <div class="capitalPicture">🏛️</div>
+            <div class="capitalName" id="storyCapital">Washington, D.C.</div>
+            <div class="storyContinent" id="storyContinent">Continent: North America</div>
+          </section>
+
+          <section class="storyPanel storyFactPanel">
+            <div class="storyStepTitle">Fun fact <span class="bulb">💡</span></div>
+            <div class="rewardFact storyFact" id="rewardFact">Here is a fun fact!</div>
+            <div class="storyBoy2" aria-hidden="true">
+              <span class="boy2Shadow"></span>
+              <span class="boy2Bag"></span>
+              <span class="boy2Body"></span>
+              <span class="boy2Neck"></span>
+              <span class="boy2Head"></span>
+              <span class="boy2Hair"></span>
+              <span class="boy2Ear"></span>
+              <span class="boy2Arm boy2ArmBack"></span>
+              <span class="boy2Arm boy2ArmFront"></span>
+              <span class="boy2Leg boy2LegLeft"></span>
+              <span class="boy2Leg boy2LegRight"></span>
+              <span class="boy2Shoe boy2ShoeLeft"></span>
+              <span class="boy2Shoe boy2ShoeRight"></span>
+            </div>
+          </section>
+        </div>
+
+        <div class="storyActions buttonRow" id="storyActions">
+          <button class="btn" id="nextRoundBtn">Next ➜</button>
+          <button class="btn small" data-action="repeatFact">🔊 Hear Again</button>
+        </div>
       </div>
     </div>
 
@@ -941,6 +2382,108 @@
       if(voiceStyle === "slow") return {rate:.68,pitch:1.08};
       return {rate:.76,pitch:1.18};
     }
+
+    // ============================================================
+    // V21 ordered narration helper using existing game voice settings
+    // ============================================================
+    let narrationTokenV19 = 0;
+
+    function unlockSpeechV21(){
+      if("speechSynthesis" in window){
+        try{ speechSynthesis.resume(); }catch(e){}
+      }
+    }
+
+    if(typeof document !== "undefined"){
+      document.addEventListener("pointerdown", unlockSpeechV21, {passive:true});
+      document.addEventListener("click", unlockSpeechV21, {passive:true});
+      document.addEventListener("touchstart", unlockSpeechV21, {passive:true});
+    }
+
+    function cancelNarrationV19(){
+      narrationTokenV19++;
+      if("speechSynthesis" in window){
+        try{
+          speechSynthesis.cancel();
+          speechSynthesis.resume();
+        }catch(e){}
+      }
+    }
+
+    function speakOrderedV19(lines, opts={}){
+      const cleanLines = (Array.isArray(lines) ? lines : [lines])
+        .map(x => String(x || "").trim())
+        .filter(Boolean);
+
+      if(!cleanLines.length) return;
+      if(muted || !("speechSynthesis" in window)) return;
+
+      cancelNarrationV19();
+      const token = narrationTokenV19;
+      const delay = opts.delay || 0;
+
+      function sayIndex(i){
+        if(token !== narrationTokenV19 || i >= cleanLines.length) return;
+        if(muted || !("speechSynthesis" in window)) return;
+
+        try{
+          speechSynthesis.resume();
+
+          const u = new SpeechSynthesisUtterance(cleanLines[i]);
+
+          // Use the same voice selection and tuning from the previous working version.
+          if(typeof getSelectedVoice === "function"){
+            const voice = getSelectedVoice();
+            if(voice) u.voice = voice;
+          }
+
+          if(typeof voiceParams === "function"){
+            const params = voiceParams();
+            u.rate = params.rate;
+            u.pitch = params.pitch;
+          }else{
+            u.rate = 0.84;
+            u.pitch = 1.15;
+          }
+
+          u.volume = 1;
+          lastSpokenText = cleanLines.join(" ");
+
+          u.onend = () => {
+            if(token === narrationTokenV19){
+              setTimeout(()=>sayIndex(i + 1), 240);
+            }
+          };
+          u.onerror = () => {
+            if(token === narrationTokenV19){
+              setTimeout(()=>sayIndex(i + 1), 500);
+            }
+          };
+
+          speechSynthesis.speak(u);
+        }catch(e){
+          // Last-resort fallback to the game's original speakLines if available.
+          if(typeof speakLines === "function"){
+            speakLines([cleanLines[i]]);
+            setTimeout(()=>sayIndex(i + 1), 1500);
+          }
+        }
+      }
+
+      setTimeout(()=>sayIndex(0), delay);
+    }
+
+    function rewardNarrationLinesV19(key){
+      const d = DATA[key];
+      if(!d) return [];
+      return [
+        `${d.name}.`,
+        `${d.name}'s capital is ${d.capital}.`,
+        `Let me tell you an interesting fact about ${d.name}.`,
+        d.fact
+      ];
+    }
+
     function speak(text, interrupt=true){
       lastSpokenText = text;
       if(muted || !("speechSynthesis" in window)) return;
@@ -1000,11 +2543,11 @@
       const el = document.createElement("div");
       el.className = "balloon";
       el.style.setProperty("--balloonColor",c1); el.style.setProperty("--balloonColor2",c2);
-      el.innerHTML = `<div class="balloonBody"><div class="flagBadge"><span>${d.flag}</span></div><div class="countryTiny">${d.short}</div></div><div class="string"></div>`;
+      el.innerHTML = `<div class="balloonBody"><div class="flagBadge"><span>${d.flag}</span></div></div><div class="string"></div>`;
       field.appendChild(el);
       const fieldW = field.clientWidth || window.innerWidth;
       const fieldH = field.clientHeight || window.innerHeight;
-      const b = {el,key,mode,field,x:Math.random()*Math.max(10,fieldW-120),baseX:0,y:fieldH+80+Math.random()*220,speed:48,drift:15+Math.random()*24,phase:Math.random()*Math.PI*2,driftSpeed:.55+Math.random()*.45,popped:false};
+      const b = {el,key,mode,field,x:Math.random()*Math.max(10,fieldW-160),baseX:0,y:fieldH+80+Math.random()*220,speed:48,drift:15+Math.random()*24,phase:Math.random()*Math.PI*2,driftSpeed:.55+Math.random()*.45,popped:false};
       b.baseX = b.x;
       el.addEventListener("click",()=>tapBalloon(b));
       return b;
@@ -1020,7 +2563,7 @@
         b.el.style.display="block"; b.el.style.opacity="1";
         b.el.querySelector(".balloonBody").classList.remove("pop","wrong");
         const slot = shuffledSlots[i];
-        b.baseX = Math.max(8, Math.min(w-112, laneW*slot + (laneW-110)/2));
+        b.baseX = Math.max(8, Math.min(w-152, laneW*slot + Math.max(0,(laneW-148)/2)));
         b.x = b.baseX;
         b.y = h + 20 + Math.random()*(h*.45);
         b.speed = 70 + Math.random()*28 + levelIndex*5;
@@ -1054,8 +2597,17 @@
     }
 
     function startQuizLevel(index){
+      unlockSpeechV21();
       SFX.click(); audio();
-      currentMode="quiz"; levelIndex=index; score=0; roundIndex=0; quizOrder=shuffle(LEVELS[index].keys).slice(0, Math.min(8, LEVELS[index].keys.length));
+      currentMode="quiz";
+      levelIndex=index;
+      score=0;
+      roundIndex=0;
+
+      const levelKeys = (LEVELS[index] && LEVELS[index].keys) ? LEVELS[index].keys : ALL_KEYS;
+      const restKeys = ALL_KEYS.filter(k => !levelKeys.includes(k));
+      quizOrder = shuffle(levelKeys).concat(shuffle(restKeys));
+
       $("#levelPill").textContent = `Lvl ${index+1}`;
       showScreen("quiz");
       nextQuizRound();
@@ -1065,6 +2617,7 @@
       return shuffle([target,...distractors]);
     }
     function nextQuizRound(){
+      cancelNarrationV19();
       if(roundIndex >= quizOrder.length){ winLevel(); return; }
       const target = quizOrder[roundIndex];
       const d = DATA[target];
@@ -1075,7 +2628,7 @@
       balloons = getQuizOptions(target).map(key=>makeBalloon(key,field,"quiz"));
       layoutQuizBalloons();
       startAnimation();
-      setTimeout(()=>speak(`Can you find the flag of ${d.name}?`),260);
+      speakOrderedV19(`Can you find the flag of ${d.name}?`, {delay:180});
     }
     function updateQuizHUD(){
       $("#scorePill").textContent = `⭐ ${score}`;
@@ -1095,44 +2648,62 @@
       speak("Oopsie! Try again.");
     }
     function popCorrect(b){
-      b.popped = true; SFX.pop();
+      b.popped = true;
+
+      // Stop the prompt voice immediately so it does not overlap later.
+      cancelNarrationV19();
+
+      SFX.pop();
       const body = b.el.querySelector(".balloonBody");
       body.classList.add("pop");
       burst(b); miniConfetti(22);
       score++; updateQuizHUD();
+
+      // No country/capital voice here. First show globe/map, then narrate in showReward.
       setTimeout(()=>showReward(b.key,"quiz"),260);
     }
     function showReward(key, mode){
       const d = DATA[key]; lastRewardKey = key;
       $("#rewardFlag").textContent = d.flag;
       $("#rewardTitle").textContent = d.name;
-      $("#rewardMeta").textContent = `Capital: ${d.capital} • ${d.continent}`;
+      const capEl = $("#storyCapital");
+      if(capEl) capEl.textContent = d.capital;
+      const contEl = $("#storyContinent");
+      if(contEl) contEl.textContent = `Continent: ${d.continent}`;
       $("#rewardFact").textContent = d.fact;
-      $("#rewardModal").classList.remove("hidden");
-      startFactVideo(key);
-      const intro = mode === "learn"
-        ? `This is ${d.name}.`
-        : `Yay! You found ${d.name}.`;
-      const zoomLine = `Let's find ${d.name} in ${d.continent}.`;
-      const capitalLine = `The capital of ${d.name} is ${d.capital}.`;
-      const factLine = `Fun fact. ${d.fact}`;
-      setTimeout(()=>speakLines([intro, zoomLine, capitalLine, factLine]),4200);
-    }
-    function closeReward(){
-      stopFactVideo();
-      $("#rewardModal").classList.add("hidden");
-      if(currentMode === "quiz"){
-        roundIndex++;
-        if(roundIndex >= quizOrder.length) winLevel(); else nextQuizRound();
+
+      const rewardModal = $("#rewardModal");
+      const storyCard = $("#storyRewardCard");
+      if(window.rewardIntroTimer){ clearTimeout(window.rewardIntroTimer); window.rewardIntroTimer = null; }
+
+      rewardModal.classList.remove("hidden");
+      if(storyCard) storyCard.classList.add("introMode");
+
+      window.rewardIntroTimer = setTimeout(()=>{
+        if(storyCard) storyCard.classList.remove("introMode");
+        startFactVideo(key);
+      }, 2000);
+
+      if(mode === "learn"){
+        speakOrderedV19([
+          `This is ${d.name}.`,
+          `${d.name}'s capital is ${d.capital}.`,
+          `Let me tell you an interesting fact about ${d.name}.`,
+          d.fact
+        ], {delay: 2350});
+      }else{
+        speakOrderedV19(rewardNarrationLinesV19(key), {delay: 2650});
       }
     }
+
+
     function winLevel(){
       stopAnimation();
       $("#progressFill").style.width = "100%";
       const earned = 3;
       savedStars[levelIndex] = Math.max(savedStars[levelIndex] || 0, earned);
       localStorage.setItem("fbp_stars",JSON.stringify(savedStars));
-      $("#winText").textContent = `Level ${levelIndex+1} complete. You earned ${"⭐".repeat(earned)}`;
+      $("#winText").textContent = `Great job! You finished ${quizOrder.length} flags. You earned ${"⭐".repeat(earned)}`;
       showScreen("win");
       SFX.win(); bigConfetti(90);
       setTimeout(()=>speakLines(["Hooray! You did it!", "You are a flag superstar!"]),250);
@@ -1164,29 +2735,123 @@
     async function renderRealCountryMap(key){
       const svg = d3.select("#realCountryMap");
       const loading = $("#mapLoading");
+      const zoomOutBtn = $("#mapZoomOut");
+      const zoomInBtn = $("#mapZoomIn");
       const d = DATA[key];
       const targetId = COUNTRY_ISO3[key];
       const sameContinent = new Set(CONTINENT_ISO3[d.continent] || []);
+
       try{
         const features = await getWorldFeatures();
         const target = features.find(f => String(f.id).padStart(3,"0") === targetId);
         const continentFeatures = features.filter(f => sameContinent.has(String(f.id).padStart(3,"0")));
         if(!target) throw new Error("Target country not found in map data");
+
         const width = 250, height = 175;
-        const projection = d3.geoMercator();
-        const path = d3.geoPath(projection);
-        projection.fitExtent([[12,12],[width-12,height-12]], {type:"FeatureCollection",features:continentFeatures.length?continentFeatures:[target]});
         svg.selectAll("*").remove();
-        svg.append("rect").attr("width",width).attr("height",height).attr("fill","#dff5ff");
-        svg.selectAll("path.base")
-          .data(continentFeatures)
-          .enter()
-          .append("path")
-          .attr("class",f => String(f.id).padStart(3,"0") === targetId ? "mapCountry target" : "mapCountry sameContinent")
-          .attr("d",path);
-        const centroid = path.centroid(target);
-        svg.append("circle").attr("class","countryPinRing").attr("cx",centroid[0]).attr("cy",centroid[1]).attr("r",6);
-        svg.append("circle").attr("class","countryPinDot").attr("cx",centroid[0]).attr("cy",centroid[1]).attr("r",5);
+        svg.attr("viewBox", `0 0 ${width} ${height}`).attr("preserveAspectRatio", "xMidYMid meet");
+        svg.append("rect").attr("width", width).attr("height", height).attr("fill", "#dff5ff");
+        const mapLayer = svg.append("g").attr("class", "interactiveMapLayer");
+
+        const worldCollection = {type:"FeatureCollection", features};
+        const continentCollection = {type:"FeatureCollection", features: continentFeatures.length ? continentFeatures : [target]};
+        const countryCollection = {type:"FeatureCollection", features:[target]};
+
+        const worldProjection = d3.geoMercator().fitExtent([[8,8],[width-8,height-8]], worldCollection);
+        const continentProjection = d3.geoMercator().fitExtent([[8,8],[width-8,height-8]], continentCollection);
+        const countryProjection = d3.geoMercator().fitExtent([[10,8],[width-10,height-8]], countryCollection);
+
+        const pathWorld = d3.geoPath(worldProjection);
+        const pathContinent = d3.geoPath(continentProjection);
+        const pathCountry = d3.geoPath(countryProjection);
+
+        const mapState = { level: 1, minLevel: 0, maxLevel: 2 };
+
+        function drawPin(layer, path, feature){
+          const centroid = path.centroid(feature);
+          if(!Number.isFinite(centroid[0]) || !Number.isFinite(centroid[1])) return;
+          layer.append("circle").attr("class","countryPinRing").attr("cx",centroid[0]).attr("cy",centroid[1]).attr("r",6);
+          layer.append("circle").attr("class","countryPinDot").attr("cx",centroid[0]).attr("cy",centroid[1]).attr("r",5);
+        }
+
+        function drawWorldView(){
+          mapLayer.selectAll("*").remove();
+          mapLayer.selectAll("path.world")
+            .data(features)
+            .enter()
+            .append("path")
+            .attr("class", f => String(f.id).padStart(3,"0") === targetId ? "mapCountry target" : "mapCountry worldLand")
+            .attr("d", pathWorld);
+          drawPin(mapLayer, pathWorld, target);
+        }
+
+        function drawContinentView(){
+          mapLayer.selectAll("*").remove();
+          mapLayer.selectAll("path.region")
+            .data(continentFeatures.length ? continentFeatures : [target])
+            .enter()
+            .append("path")
+            .attr("class", f => String(f.id).padStart(3,"0") === targetId ? "mapCountry target" : "mapCountry sameContinent")
+            .attr("d", pathContinent);
+          drawPin(mapLayer, pathContinent, target);
+        }
+
+        function drawCountryView(){
+          mapLayer.selectAll("*").remove();
+          mapLayer.append("path")
+            .datum(target)
+            .attr("class", "mapCountry target countryOnly")
+            .attr("d", pathCountry);
+          drawPin(mapLayer, pathCountry, target);
+        }
+
+        function renderLevel(){
+          if(mapState.level === 0) drawWorldView();
+          else if(mapState.level === 1) drawContinentView();
+          else drawCountryView();
+          updateButtons();
+        }
+
+        function updateButtons(){
+          if(zoomOutBtn) zoomOutBtn.disabled = mapState.level <= mapState.minLevel;
+          if(zoomInBtn) zoomInBtn.disabled = mapState.level >= mapState.maxLevel;
+        }
+
+        function changeLevel(delta){
+          mapState.level = Math.max(mapState.minLevel, Math.min(mapState.maxLevel, mapState.level + delta));
+          renderLevel();
+        }
+
+        renderLevel();
+
+        if(zoomOutBtn) zoomOutBtn.onclick = (e)=>{ e.preventDefault(); e.stopPropagation(); changeLevel(-1); };
+        if(zoomInBtn) zoomInBtn.onclick = (e)=>{ e.preventDefault(); e.stopPropagation(); changeLevel(1); };
+
+        const svgNode = svg.node();
+        if(svgNode){
+          svgNode.style.touchAction = 'none';
+          svgNode.onwheel = (e)=>{
+            e.preventDefault();
+            changeLevel(e.deltaY < 0 ? 1 : -1);
+          };
+
+          let startY = null;
+          svgNode.onpointerdown = (e)=>{
+            startY = e.clientY;
+            svgNode.setPointerCapture?.(e.pointerId);
+          };
+          svgNode.onpointerup = (e)=>{
+            if(startY == null) return;
+            const dy = e.clientY - startY;
+            if(Math.abs(dy) > 18){
+              changeLevel(dy < 0 ? 1 : -1);
+            }
+            startY = null;
+            try{ svgNode.releasePointerCapture?.(e.pointerId); }catch(_e){}
+          };
+          svgNode.onpointercancel = ()=>{ startY = null; };
+        }
+
         if(loading) loading.remove();
       }catch(e){
         if(loading) loading.textContent = `${d.name} map could not load. Check internet connection.`;
@@ -1201,25 +2866,20 @@
       const icons = cfg.icons || ["🌍","⭐","🎈"];
       sceneBox.className = "factScene";
       sceneBox.innerHTML = `
-        <div class="realMapJourney">
-          <div class="earthSpin">🌍</div>
-          <div class="mapCard">
-            <div class="mapSvgWrap">
+        <div class="realMapJourney storyRealMapJourney">
+          <div class="mapCard storyOnlyMapCard">
+            <div class="mapSvgWrap storyOnlyMapSvg">
               <svg id="realCountryMap" viewBox="0 0 250 175" preserveAspectRatio="xMidYMid meet"></svg>
               <div class="mapLoading" id="mapLoading">Loading real ${d.name} map…</div>
-            </div>
-            <div class="mapInfo">
-              <div class="continentLabel">🗺️ ${d.continent}</div>
-              <h3>${d.flag} ${d.name}</h3>
-              <div class="capitalLine">📍 Capital: ${d.capital}</div>
-              <div class="miniLandmarks">
-                <span>${icons[0]}</span><span>${icons[1]}</span><span>${icons[2]}</span>
+              <div class="mapZoomControls" aria-label="Map zoom controls">
+                <button type="button" class="mapZoomBtn" id="mapZoomOut" aria-label="Zoom out">−</button>
+                <button type="button" class="mapZoomBtn" id="mapZoomIn" aria-label="Zoom in">+</button>
               </div>
             </div>
           </div>
         </div>
       `;
-      setTimeout(()=>renderRealCountryMap(key), 3100);
+      setTimeout(()=>renderRealCountryMap(key), 120);
     }
     function roundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();ctx.fill();}
     function drawCloud(ctx,x,y,s){ctx.fillStyle="rgba(255,255,255,.86)";ctx.beginPath();ctx.arc(x,y,12*s,0,Math.PI*2);ctx.arc(x+14*s,y-7*s,16*s,0,Math.PI*2);ctx.arc(x+32*s,y,13*s,0,Math.PI*2);ctx.arc(x+18*s,y+5*s,14*s,0,Math.PI*2);ctx.fill();}
