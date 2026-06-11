@@ -50,26 +50,26 @@ body{font-family:"Fredoka","Baloo 2","Comic Sans MS",system-ui,sans-serif;color:
    ============================================================ */
 
 const LEVEL_1_PUZZLES = [
-  { name:"Avocado", image:"level1-assets/acocado.png" },
+  { name:"Avocado", image:["level1-assets/acocado.png", "level1-assets/accocado.png", "level1-assets/avocado.png"] },
   { name:"Apple", image:"level1-assets/apple.png" },
   { name:"Banana", image:"level1-assets/banana.png" },
   { name:"Blackberry", image:"level1-assets/blackberry.png" },
-  { name:"Blueberry", image:"level1-assets/blueberry.png" },
-  { name:"Cherry", image:"level1-assets/cherry.png" },
-  { name:"Coconut", image:"level1-assets/coconut.png" },
+  { name:"Blueberry", image:["level1-assets/blueberry.png", "level1-assets/blueberry .png"] },
+  { name:"Cherry", image:["level1-assets/cherry.png", "level1-assets/cherry .png"] },
+  { name:"Coconut", image:["level1-assets/coconut.png", "level1-assets/coconut .png"] },
   { name:"Grapes", image:"level1-assets/grapes.png" },
   { name:"Kiwi", image:"level1-assets/kiwi.png" },
-  { name:"Lemon", image:"level1-assets/lemon.png" },
+  { name:"Lemon", image:["level1-assets/lemon.png", "level1-assets/lemon .png", "level1-assets/lemmon .png"] },
   { name:"Lime", image:"level1-assets/lime.png" },
-  { name:"Mango", image:"level1-assets/Mango.png" },
+  { name:"Mango", image:["level1-assets/Mango.png", "level1-assets/mango.png", "level1-assets/Mango .png"] },
   { name:"Orange", image:"level1-assets/orange.png" },
   { name:"Papaya", image:"level1-assets/papaya.png" },
-  { name:"Peach", image:"level1-assets/peach.png" },
+  { name:"Peach", image:["level1-assets/peach.png", "level1-assets/peach .png"] },
   { name:"Pear", image:"level1-assets/pear.png" },
-  { name:"Pineapple", image:"level1-assets/Pineapple.png" },
-  { name:"Pomegranate", image:"level1-assets/pomogranate.png" },
-  { name:"Strawberry", image:"level1-assets/strawberry.png" },
-  { name:"Watermelon", image:"level1-assets/Watermelon.png" }
+  { name:"Pineapple", image:["level1-assets/Pineapple.png", "level1-assets/pineapple.png", "level1-assets/Pineapple .png"] },
+  { name:"Pomegranate", image:["level1-assets/pomogranate.png", "level1-assets/pomogranade.png", "level1-assets/pomegranate.png"] },
+  { name:"Strawberry", image:["level1-assets/strawberry.png", "level1-assets/strawberry .png"] },
+  { name:"Watermelon", image:["level1-assets/Watermelon.png", "level1-assets/watermelon.png", "level1-assets/Watermelon .png"] }
 ];
 
 const LEVEL_2_PUZZLES = [
@@ -96,9 +96,9 @@ const LEVEL_2_PUZZLES = [
 ];
 
 const LEVEL_3_PUZZLES = [
-  { name:"School Bus", image:"level3-assets/school_bus.png" },
-  { name:"Fire Truck", image:"level3-assets/fire_truck.png" },
-  { name:"Police Car", image:"level3-assets/police_car.png" },
+  { name:"School Bus", image:["level3-assets/school-bus.png", "level3-assets/school_bus.png"] },
+  { name:"Fire Truck", image:["level3-assets/fire-truck.png", "level3-assets/fire_truck.png"] },
+  { name:"Police Car", image:["level3-assets/police-car.png", "level3-assets/police_car.png"] },
   { name:"Ambulance", image:"level3-assets/ambulance.png" },
   { name:"Train", image:"level3-assets/train.png" },
   { name:"Airplane", image:"level3-assets/airplane.png" },
@@ -107,15 +107,15 @@ const LEVEL_3_PUZZLES = [
   { name:"Boat", image:"level3-assets/boat.png" },
   { name:"Submarine", image:"level3-assets/submarine.png" },
   { name:"Tractor", image:"level3-assets/tractor.png" },
-  { name:"Dump Truck", image:"level3-assets/dump_truck.png" },
+  { name:"Dump Truck", image:["level3-assets/dump-truck.png", "level3-assets/dump_truck.png", "level3-assets/dump-truck .png"] },
   { name:"Excavator", image:"level3-assets/excavator.png" },
   { name:"Bicycle", image:"level3-assets/bicycle.png" },
   { name:"Scooter", image:"level3-assets/scooter.png" },
   { name:"Motorcycle", image:"level3-assets/motorcycle.png" },
-  { name:"Race Car", image:"level3-assets/race_car.png" },
+  { name:"Race Car", image:["level3-assets/race-car.png", "level3-assets/race_car.png"] },
   { name:"Taxi", image:"level3-assets/taxi.png" },
-  { name:"Hot Air Balloon", image:"level3-assets/hot_air_balloon.png" },
-  { name:"Monster Truck", image:"level3-assets/monster_truck.png" }
+  { name:"Hot Air Balloon", image:["level3-assets/hot-air-balloon.png", "level3-assets/hot_air_balloon.png", "level3-assets/hot-air- balloon.png", "level3-assets/hot-air- balloon .png"] },
+  { name:"Monster Truck", image:["level3-assets/monster-truck.png", "level3-assets/monster_truck.png"] }
 ];
 
 const LEVELS = {
@@ -233,10 +233,25 @@ function loadImage(src){
   imageCache[src] = new Promise((resolve,reject)=>{
     const img = new Image();
     img.onload = ()=>{ console.log("Loaded image:",src); resolve(img); };
-    img.onerror = ()=>{ console.error("Image failed to load:",src); reject(new Error("Image failed to load: " + src)); };
+    img.onerror = ()=>{ console.warn("Image failed to load:",src); reject(new Error("Image failed to load: " + src)); };
     img.src = src;
   });
   return imageCache[src];
+}
+
+async function loadImageAny(srcOrList){
+  const list = Array.isArray(srcOrList) ? srcOrList : [srcOrList];
+  let lastError = null;
+
+  for(const src of list){
+    try{
+      return await loadImage(src);
+    }catch(error){
+      lastError = error;
+    }
+  }
+
+  throw lastError || new Error("No image path found");
 }
 
 function drawPlaceholder(ctx,name){
@@ -270,7 +285,7 @@ async function makeSource(){
   x.fillRect(0,0,boardW,boardH);
 
   try{
-    const img = await loadImage(puzzle.image);
+    const img = await loadImageAny(puzzle.image);
     const iw = img.naturalWidth || img.width;
     const ih = img.naturalHeight || img.height;
 
