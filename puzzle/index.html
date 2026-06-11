@@ -1,813 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<title>Puzzle Explorer - Level 2</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&display=swap");
+:root{--sky:#8eccff;--sky2:#bfe6ff;--orange:#ffb35c;--green:#a8e6a1;--yellow:#ffe066;--pink:#ffb3d1;--purple:#c9b3ff;--ink:#3a2b5c}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:"Fredoka","Baloo 2","Comic Sans MS",system-ui,sans-serif;color:var(--ink);height:100vh;height:100dvh;overflow:hidden;position:fixed;inset:0;overscroll-behavior:none;touch-action:none;background:radial-gradient(120% 80% at 50% -10%,var(--sky2) 0%,var(--sky) 55%,var(--purple) 130%)}
+#app{display:flex;flex-direction:column;height:100%;width:100%}
+#bar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
+#title{font-family:"Baloo 2","Fredoka",system-ui,sans-serif;font-weight:800;color:#fff;letter-spacing:.01em;text-shadow:0 3px 0 rgba(34,117,190,.75),0 8px 15px rgba(32,87,150,.24);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(18px,5vw,28px);display:flex;align-items:center;gap:8px}
+#title::before{content:"";width:34px;height:34px;flex:0 0 auto;border-radius:13px;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.62),transparent 25%),linear-gradient(180deg,#ffd86c,#ff9d4d);box-shadow:0 5px 0 #d8752e,0 9px 14px rgba(48,67,120,.18),inset 0 -4px 0 rgba(0,0,0,.10)}
+.chip{min-width:62px;background:rgba(255,255,255,.94);border:3px solid rgba(255,255,255,.7);border-radius:20px;padding:7px 11px;color:#17406b;box-shadow:0 6px 0 rgba(38,93,142,.16),0 12px 18px rgba(31,84,142,.12);font-size:clamp(12px,3.4vw,16px);font-weight:700;line-height:1;text-align:center}
+.chip small{display:block;font-size:.62em;font-weight:700;color:#4d7aa5;letter-spacing:.04em}.chip span{font-family:"Baloo 2","Fredoka",system-ui,sans-serif;color:#174ab6;font-size:1.18em}
+.icon-btn{position:relative;width:clamp(48px,12vw,60px);height:clamp(48px,12vw,60px);border:none;border-radius:20px;cursor:pointer;font-size:0;line-height:1;background:radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),linear-gradient(180deg,#8fea55,#3caf32);box-shadow:0 8px 0 #267929,0 15px 22px rgba(40,85,60,.25),inset 0 -5px 0 rgba(0,0,0,.10);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
+.icon-btn::before{content:attr(data-icon);position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(22px,6vw,29px);filter:drop-shadow(0 2px 0 rgba(255,255,255,.22))}.icon-btn::after{content:"";position:absolute;left:16%;top:12%;width:34%;height:20%;border-radius:999px;background:rgba(255,255,255,.42);transform:rotate(-20deg)}.icon-btn:hover{filter:saturate(1.08) brightness(1.03);transform:translateY(-2px)}.icon-btn:active{transform:translateY(5px);box-shadow:0 3px 0 #267929,0 8px 12px rgba(40,85,60,.20),inset 0 -4px 0 rgba(0,0,0,.10)}
+#homeBtn{background:radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),linear-gradient(180deg,#68c7ff,#218de8);box-shadow:0 8px 0 #1166b3,0 15px 22px rgba(30,75,130,.24),inset 0 -5px 0 rgba(0,0,0,.10)}#homeBtn:active{box-shadow:0 3px 0 #1166b3,0 8px 12px rgba(30,75,130,.20),inset 0 -4px 0 rgba(0,0,0,.10)}#muteBtn.muted{background:radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),linear-gradient(180deg,#ff8fb7,#ef3e83);box-shadow:0 8px 0 #b82062,0 15px 22px rgba(120,30,80,.22),inset 0 -5px 0 rgba(0,0,0,.10)}
+#stage{position:relative;flex:1 1 auto;width:100%;overflow:hidden;touch-action:none;background:radial-gradient(circle at 18% 16%,rgba(255,255,255,.26),transparent 18%),radial-gradient(circle at 83% 20%,rgba(255,255,255,.18),transparent 18%)}#guide{position:absolute;border-radius:14px;opacity:.20;pointer-events:none;box-shadow:0 0 0 5px rgba(255,255,255,.65) inset,0 16px 28px rgba(34,84,120,.12)}#slots{position:absolute;pointer-events:none}
+.piece{position:absolute;top:0;left:0;touch-action:none;cursor:grab;filter:drop-shadow(0 7px 7px rgba(31,40,72,.26));will-change:translate,scale;transition:filter .12s ease,transform .12s ease}.piece.settling{transition:translate .18s ease-out}.piece.locked{cursor:default;filter:drop-shadow(0 2px 2px rgba(31,40,72,.10))}.piece.lifting{cursor:grabbing;filter:drop-shadow(0 18px 16px rgba(31,40,72,.35))}
+#tools{flex:0 0 auto;display:none;gap:12px;justify-content:center;padding:10px 12px max(14px,env(safe-area-inset-bottom))}#tools.show{display:flex}.big-btn{position:relative;overflow:hidden;border:none;cursor:pointer;color:#fff;font-family:"Baloo 2","Fredoka",system-ui,sans-serif;font-weight:800;letter-spacing:.01em;font-size:clamp(15px,4.2vw,20px);padding:12px 18px;border:4px solid rgba(255,255,255,.55);border-radius:26px;text-shadow:0 2px 0 rgba(0,0,0,.12);box-shadow:0 8px 0 rgba(0,0,0,.18),0 16px 24px rgba(40,60,120,.16),inset 0 -5px 0 rgba(0,0,0,.08);transition:transform .08s}.big-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 35%,rgba(255,255,255,.42) 45%,transparent 58%);transform:translateX(-120%);transition:transform .45s ease}.big-btn:hover::after{transform:translateX(120%)}.big-btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18)}#restartBtn{background:linear-gradient(180deg,#ffca70,#ff9b3f)}#skipBtn{background:linear-gradient(180deg,#bca8ff,#826af5)}#nextBtn{background:linear-gradient(180deg,#94eb80,#53c243);color:#1e6b34;font-size:clamp(20px,6vw,28px);padding:16px 34px;border-radius:28px}
+#gate{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;overflow:hidden;perspective:1000px;background:radial-gradient(circle at 50% 10%,rgba(255,255,255,.45),transparent 24%),linear-gradient(180deg,#bdeeff 0%,#83d2ff 52%,#b7a8ff 100%)}#gate::before{content:"";position:absolute;left:6%;right:6%;bottom:9%;height:28%;border-radius:50% 50% 0 0;background:linear-gradient(180deg,#9cea7b,#59c650);box-shadow:inset 0 12px 0 rgba(255,255,255,.18);opacity:.72}
+#scene{position:relative;width:min(78vw,340px);height:min(30vh,210px);transform-style:preserve-3d;transform:rotateX(10deg);filter:drop-shadow(0 18px 22px rgba(55,40,100,.16))}.float{position:absolute;width:clamp(54px,16vw,86px);aspect-ratio:1;border-radius:24%;border:4px solid rgba(255,255,255,.42);transform-style:preserve-3d;animation:floaty 4.2s ease-in-out infinite;box-shadow:0 16px 20px rgba(60,40,100,.30),inset 0 -7px 0 rgba(0,0,0,.14),inset 0 7px 0 rgba(255,255,255,.45)}.float::before{content:"";position:absolute;top:-22%;left:50%;width:36%;aspect-ratio:1;margin-left:-18%;border-radius:50%;background:inherit;box-shadow:inset 0 4px 0 rgba(255,255,255,.4),0 4px 6px rgba(60,40,100,.2)}.f1{left:6%;top:14%;background:var(--yellow);--z:40px;--r:-8deg;animation-delay:0s}.f2{left:60%;top:4%;background:var(--pink);--z:80px;--r:10deg;animation-delay:.7s}.f3{left:32%;top:42%;background:var(--green);--z:120px;--r:-4deg;animation-delay:.3s}.f4{left:68%;top:52%;background:var(--sky);--z:60px;--r:7deg;animation-delay:1s}.f5{left:10%;top:66%;background:var(--purple);--z:24px;--r:-12deg;animation-delay:1.4s}@keyframes floaty{0%,100%{translate:0 0 var(--z);rotate:var(--r)}50%{translate:0 -16px var(--z);rotate:calc(var(--r) * -1)}}
+#gate h1{position:relative;z-index:2;font-family:"Baloo 2","Fredoka",system-ui,sans-serif;color:#fff;font-size:clamp(32px,9.5vw,58px);letter-spacing:.5px;text-shadow:0 4px 0 #4f96d8,0 10px 16px rgba(40,20,80,.28)}#gate p{position:relative;z-index:2;color:#fff;font-size:clamp(16px,4.5vw,22px);max-width:28ch;line-height:1.35;font-weight:700;background:rgba(255,255,255,.28);border-radius:999px;padding:8px 16px;text-shadow:0 2px 4px rgba(40,20,80,.30)}#levelButtons{position:relative;z-index:2;display:grid;grid-template-columns:repeat(2,minmax(130px,1fr));gap:12px;width:min(520px,92vw)}.level-btn{border:none;border-radius:28px;padding:14px 18px;min-height:62px;font-family:"Baloo 2","Fredoka",system-ui,sans-serif;font-size:clamp(18px,5vw,24px);font-weight:800;color:#fff;cursor:pointer;text-shadow:0 3px 0 rgba(0,0,0,.16);box-shadow:0 9px 0 rgba(0,0,0,.18),0 15px 22px rgba(40,85,60,.22),inset 0 -5px 0 rgba(0,0,0,.08)}.level-btn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.18),0 7px 12px rgba(40,85,60,.18),inset 0 -4px 0 rgba(0,0,0,.08)}.level-btn.active{background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.48),transparent 28%),linear-gradient(180deg,#8fea55,#3caf32)}.level-btn.locked{background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.48),transparent 28%),linear-gradient(180deg,#bca8ff,#826af5);opacity:.86}.level-btn small{display:block;font-size:.55em;margin-top:2px}
+#win{position:absolute;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;backdrop-filter:blur(6px);background:rgba(46,62,128,.24)}#win.show{display:flex}#winCard{background:#fff;border-radius:30px;padding:26px 30px;display:flex;flex-direction:column;align-items:center;gap:14px;border:5px solid rgba(255,255,255,.75);box-shadow:0 16px 0 rgba(44,76,128,.18),0 28px 44px rgba(40,60,120,.22);animation:pop .5s cubic-bezier(.2,1.5,.4,1)}#winCard .star{font-size:clamp(60px,18vw,110px);animation:bob 1.6s ease-in-out infinite}#winCard h2{font-family:"Baloo 2","Fredoka",system-ui,sans-serif;font-size:clamp(28px,8vw,46px);color:#ff8a3d;text-shadow:0 3px 0 rgba(255,230,190,.8)}#winCard p{color:#5c4a7a;font-weight:700;font-size:clamp(15px,4vw,20px)}@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}@keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes snapPulse{0%{scale:1.18}100%{scale:1}}.snapped{animation:snapPulse .28s ease-out}.confetti{position:absolute;width:14px;height:14px;border-radius:3px;z-index:55;pointer-events:none}#toast{position:absolute;z-index:100;left:50%;bottom:14%;transform:translateX(-50%) translateY(20px);background:rgba(255,255,255,.94);color:#17406b;font-weight:800;padding:12px 18px;border-radius:999px;box-shadow:0 8px 18px rgba(31,84,142,.18);opacity:0;pointer-events:none;transition:.25s ease}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:640px){#bar{gap:7px;padding:max(8px,env(safe-area-inset-top)) 8px 8px}.chip{min-width:52px;padding:6px 8px;border-radius:16px}.icon-btn{border-radius:17px}#tools{gap:8px}.big-btn{border-radius:22px;padding:11px 14px}#levelButtons{grid-template-columns:1fr;width:min(360px,90vw)}#scene{height:min(25vh,170px)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bar"><button id="homeBtn" class="icon-btn" data-icon="🏠" aria-label="Back to menu">🏠</button><div id="title">Puzzle Explorer</div><div class="chip"><small>LEVEL</small><span id="lvlNum">2</span></div><div class="chip"><small>PIECES</small><span id="pieceCount">0/6</span></div><button id="muteBtn" class="icon-btn" data-icon="🔊" aria-label="Sound on or off">🔊</button></div>
+  <div id="stage">
+    <canvas id="guide"></canvas><canvas id="slots"></canvas>
+    <div id="gate"><div id="scene"><div class="float f1"></div><div class="float f2"></div><div class="float f3"></div><div class="float f4"></div><div class="float f5"></div></div><h1>Puzzle Explorer</h1><p>Pick a level and build the picture!</p><div id="levelButtons"><button class="level-btn locked" data-level="1">Level 1 <small>4 pieces soon</small></button><button class="level-btn active" data-level="2">Level 2 <small>6 pieces</small></button><button class="level-btn locked" data-level="3">Level 3 <small>8 pieces soon</small></button><button class="level-btn locked" data-level="4">Level 4 <small>10 pieces soon</small></button><button class="level-btn locked" data-level="5">Level 5 <small>16 pieces soon</small></button></div></div>
+    <div id="win"><div id="winCard"><div class="star">⭐</div><h2 id="winText">You did it!</h2><p id="winSubText">Great puzzle work!</p><button id="nextBtn" class="big-btn">Next Puzzle →</button></div></div><div id="toast">Coming soon!</div>
+  </div>
+  <div id="tools"><button id="restartBtn" class="big-btn">🔄 Restart</button><button id="skipBtn" class="big-btn">Skip ⏭</button></div>
+</div>
 <script>
-/* ============================================================
-   LEVEL 2 DATA
-   Level 2 = 6 puzzle pieces = 3 columns x 2 rows
-   Images must be inside:
-   F1 / puzzle / assets /
-   ============================================================ */
-
-const LEVEL_2_PUZZLES = [
-  { name:"Baby Goat", image:"assets/alanajordan-ai-generated-7796260_1920.jpg" },
-  { name:"Fox", image:"assets/alexandra_koch-red-fox-5975470.jpg" },
-  { name:"Red Dinosaur", image:"assets/ameliyasalsa-dinosaur-6825094.png" },
-  { name:"Puppy", image:"assets/arpitade3-dog-cartoon-4841703.jpg" },
-  { name:"Cheetah", image:"assets/astralember-ai-generated-9576523.jpg" },
-  { name:"Winter Dog", image:"assets/biancavandijk-winter-8425500.jpg" },
-  { name:"Flying Dinosaur", image:"assets/bumblebee05-dinosaur-6805731.png" },
-  { name:"Elephant", image:"assets/elephant.png" },
-  { name:"Goat Cartoon", image:"assets/goat.png" },
-  { name:"Orange Dinosaur", image:"assets/lucianavieira-dinosaur-7761348.png" },
-  { name:"Blue Bird", image:"assets/olenchic-cartoon-9941480.png" },
-  { name:"Donkey", image:"assets/openclipart-vectors-donkey-1299389.svg" },
-  { name:"Red Dino", image:"assets/Red dino .png" },
-  { name:"Turtle", image:"assets/rjdesigns2030-tortoise-7713285.jpg" },
-  { name:"Tiger", image:"assets/tiger.png" },
-  { name:"Bear", image:"assets/vinafrog-bear-7112623.png" },
-  { name:"Hippo", image:"assets/vinafrog-hippopotamus-7112622.png" },
-  { name:"Blue Whale", image:"assets/whale .png" },
-  { name:"Happy Whale", image:"assets/whale 1.png" }
+const LEVEL_2_PUZZLES=[
+{name:"Baby Goat",image:"assets/alanajordan-ai-generated-7796260_1920.jpg"},
+{name:"Fox",image:"assets/alexandra_koch-red-fox-5975470.jpg"},
+{name:"Red Dinosaur",image:"assets/ameliyasalsa-dinosaur-6825094.png"},
+{name:"Puppy",image:"assets/arpitade3-dog-cartoon-4841703.jpg"},
+{name:"Cheetah",image:"assets/astralember-ai-generated-9576523.jpg"},
+{name:"Winter Dog",image:"assets/biancavandijk-winter-8425500.jpg"},
+{name:"Flying Dinosaur",image:"assets/bumblebee05-dinosaur-6805731.png"},
+{name:"Elephant",image:"assets/elephant.png"},
+{name:"Goat Cartoon",image:"assets/goat.png"},
+{name:"Orange Dinosaur",image:"assets/lucianavieira-dinosaur-7761348.png"},
+{name:"Blue Bird",image:"assets/olenchic-cartoon-9941480.png"},
+{name:"Animal",image:"assets/openclipart-vectors-animal-1294281.svg"},
+{name:"Donkey",image:"assets/openclipart-vectors-donkey-1299389.svg"},
+{name:"Red Dino",image:"assets/Red dino .png"},
+{name:"Turtle",image:"assets/rjdesigns2030-tortoise-7713285.jpg"},
+{name:"Tiger",image:"assets/tiger.png"},
+{name:"Bear",image:"assets/vinafrog-bear-7112623.png"},
+{name:"Hippo",image:"assets/vinafrog-hippopotamus-7112622.png"},
+{name:"Blue Whale",image:"assets/whale .png"},
+{name:"Happy Whale",image:"assets/whale 1.png"}
 ];
-
-const PRAISE = [
-  "You did it!",
-  "Great job!",
-  "Awesome!",
-  "Yay!",
-  "Wonderful!",
-  "Amazing!",
-  "Super!",
-  "Nice work!"
-];
-
-/* ============================================================
-   STATE
-   ============================================================ */
-
-const SCALE = 2;
-
-let puzzleIndex = 0;
-let cols = 3;
-let rows = 2;
-let cell, margin, kr;
-let boardLeft, boardTop, boardW, boardH;
-let pieces = [];
-let lockedCount = 0;
-let muted = false;
-let lastW = 0;
-let lastH = 0;
-let V, H;
-
-const stage = document.getElementById("stage");
-const guideC = document.getElementById("guide");
-const slotsC = document.getElementById("slots");
-const lvlNum = document.getElementById("lvlNum");
-const pieceCt = document.getElementById("pieceCount");
-const winBox = document.getElementById("win");
-const winText = document.getElementById("winText");
-const winSubText = document.getElementById("winSubText");
-const title = document.getElementById("title");
-const toast = document.getElementById("toast");
-
-/* ============================================================
-   SOUND
-   ============================================================ */
-
-let audio = null;
-
-function initAudio(){
-  if(audio) return;
-  try{
-    audio = new (window.AudioContext || window.webkitAudioContext)();
-  }catch(e){}
-}
-
-function beep(freq, dur, type="sine", vol=.22){
-  if(!audio || muted) return;
-
-  const t = audio.currentTime;
-  const o = audio.createOscillator();
-  const g = audio.createGain();
-
-  o.type = type;
-  o.frequency.setValueAtTime(freq,t);
-
-  g.gain.setValueAtTime(0,t);
-  g.gain.linearRampToValueAtTime(vol,t+.012);
-  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-
-  o.connect(g).connect(audio.destination);
-  o.start(t);
-  o.stop(t+dur+.02);
-}
-
-const Snd = {
-  pick(){
-    beep(520,.08,"triangle",.18);
-  },
-  snap(){
-    beep(440,.07,"square",.18);
-    beep(660,.12,"sine",.2);
-  },
-  win(){
-    [523,659,784,1047].forEach((f,i)=>{
-      setTimeout(()=>beep(f,.18,"triangle",.25),i*120);
-    });
-  },
-  cheer(){
-    for(let i=0;i<10;i++){
-      setTimeout(()=>beep(700+Math.random()*500,.1,"sine",.12),i*70);
-    }
-  }
-};
-
-/* ============================================================
-   VOICE
-   ============================================================ */
-
-let voice = null;
-
-function pickVoice(){
-  if(!("speechSynthesis" in window)) return;
-
-  const all = speechSynthesis.getVoices();
-  if(!all.length) return;
-
-  const en = all.filter(v=>/^en[-_]?/i.test(v.lang));
-
-  const prefs = [
-    /natural/i,
-    /google us english/i,
-    /google uk english female/i,
-    /samantha/i,
-    /karen/i,
-    /tessa/i,
-    /aria/i,
-    /jenny/i,
-    /female/i
-  ];
-
-  for(const re of prefs){
-    const m = en.find(v=>re.test(v.name));
-    if(m){
-      voice = m;
-      return;
-    }
-  }
-
-  voice = en[0] || all[0];
-}
-
-if("speechSynthesis" in window){
-  pickVoice();
-  speechSynthesis.addEventListener("voiceschanged",pickVoice);
-}
-
-function say(text){
-  if(muted || !("speechSynthesis" in window)) return;
-
-  try{
-    if(!voice) pickVoice();
-
-    const u = new SpeechSynthesisUtterance(text);
-    if(voice) u.voice = voice;
-
-    u.lang = "en-US";
-    u.rate = 0.92;
-    u.pitch = 1.12;
-    u.volume = 1;
-
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  }catch(e){}
-}
-
-/* ============================================================
-   IMAGE LOADING
-   This version will not silently fail.
-   If an image is missing, it draws a friendly placeholder.
-   ============================================================ */
-
-const imageCache = {};
-
-function loadImage(src){
-  if(imageCache[src]) return imageCache[src];
-
-  imageCache[src] = new Promise((resolve,reject)=>{
-    const img = new Image();
-
-    img.onload = ()=>{
-      console.log("Loaded image:", src);
-      resolve(img);
-    };
-
-    img.onerror = ()=>{
-      console.error("Image failed to load:", src);
-      reject(new Error("Image failed to load: " + src));
-    };
-
-    img.src = src;
-  });
-
-  return imageCache[src];
-}
-
-function drawPlaceholder(ctx, name){
-  ctx.fillStyle = "#fff7d6";
-  ctx.fillRect(0,0,boardW,boardH);
-
-  ctx.fillStyle = "#bfe6ff";
-  ctx.beginPath();
-  ctx.arc(boardW*0.50, boardH*0.36, Math.min(boardW,boardH)*0.22, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle = "#3a2b5c";
-  ctx.font = "bold " + Math.floor(boardH*0.18) + "px Comic Sans MS, Arial";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🧩", boardW*0.50, boardH*0.35);
-
-  ctx.font = "bold " + Math.floor(boardH*0.08) + "px Comic Sans MS, Arial";
-  ctx.fillText(name, boardW*0.50, boardH*0.68);
-}
-
-async function makeSource(){
-  const puzzle = LEVEL_2_PUZZLES[puzzleIndex];
-
-  const c = document.createElement("canvas");
-  c.width = boardW * SCALE;
-  c.height = boardH * SCALE;
-
-  const x = c.getContext("2d");
-  x.scale(SCALE,SCALE);
-
-  try{
-    const img = await loadImage(puzzle.image);
-
-    const iw = img.naturalWidth || img.width;
-    const ih = img.naturalHeight || img.height;
-
-    /*
-      contain image inside the board so animal heads/tails are not cropped too much
-    */
-    const scale = Math.min(boardW / iw, boardH / ih) * 0.92;
-    const dw = iw * scale;
-    const dh = ih * scale;
-    const dx = (boardW - dw) / 2;
-    const dy = (boardH - dh) / 2;
-
-    x.fillStyle = "#ffffff";
-    x.fillRect(0,0,boardW,boardH);
-
-    x.fillStyle = "#fff7d6";
-    x.fillRect(0,0,boardW,boardH);
-
-    x.drawImage(img,dx,dy,dw,dh);
-  }catch(error){
-    console.error(error);
-    drawPlaceholder(x, puzzle.name);
-  }
-
-  return c;
-}
-
-/* ============================================================
-   JIGSAW SHAPE LOGIC
-   ============================================================ */
-
-function buildEdgeSigns(){
-  V = [];
-  H = [];
-
-  for(let r=0;r<rows;r++){
-    V[r] = [];
-    for(let c=0;c<=cols;c++){
-      V[r][c] = c===0 || c===cols ? 0 : (Math.random()<.5 ? 1 : -1);
-    }
-  }
-
-  for(let r=0;r<=rows;r++){
-    H[r] = [];
-    for(let c=0;c<cols;c++){
-      H[r][c] = r===0 || r===rows ? 0 : (Math.random()<.5 ? 1 : -1);
-    }
-  }
-}
-
-function edgeOut(side,c,r){
-  if(side==="top") return r===0 ? null : (H[r][c]===-1);
-  if(side==="bottom") return r===rows-1 ? null : (H[r+1][c]===1);
-  if(side==="left") return c===0 ? null : (V[r][c]===-1);
-  if(side==="right") return c===cols-1 ? null : (V[r][c+1]===1);
-}
-
-function tracePiece(x,c,r){
-  const m = margin;
-  const s = cell;
-
-  const TL = [m,m];
-  const TR = [m+s,m];
-  const BR = [m+s,m+s];
-  const BL = [m,m+s];
-
-  const cx = m+s/2;
-  const cy = m+s/2;
-
-  x.beginPath();
-  x.moveTo(...TL);
-
-  drawEdge(x,"top",edgeOut("top",c,r),cx,m,TR);
-  drawEdge(x,"right",edgeOut("right",c,r),m+s,cy,BR);
-  drawEdge(x,"bottom",edgeOut("bottom",c,r),cx,m+s,BL);
-  drawEdge(x,"left",edgeOut("left",c,r),m,cy,TL);
-
-  x.closePath();
-}
-
-function drawEdge(x,side,out,mx,my,end){
-  if(out===null){
-    x.lineTo(...end);
-    return;
-  }
-
-  const acw = !out;
-
-  if(side==="top"){
-    x.lineTo(mx-kr,my);
-    x.arc(mx,my,kr,Math.PI,0,acw);
-  }
-
-  if(side==="right"){
-    x.lineTo(mx,my-kr);
-    x.arc(mx,my,kr,-Math.PI/2,Math.PI/2,acw);
-  }
-
-  if(side==="bottom"){
-    x.lineTo(mx+kr,my);
-    x.arc(mx,my,kr,0,Math.PI,acw);
-  }
-
-  if(side==="left"){
-    x.lineTo(mx,my+kr);
-    x.arc(mx,my,kr,Math.PI/2,-Math.PI/2,acw);
-  }
-
-  x.lineTo(...end);
-}
-
-/* ============================================================
-   LAYOUT
-   ============================================================ */
-
-function computeLayout(){
-  cols = 3;
-  rows = 2;
-
-  const sw = stage.clientWidth;
-  const sh = stage.clientHeight;
-
-  const maxBoardW = sw * 0.94;
-  const maxBoardH = sh * 0.50;
-
-  cell = Math.floor(Math.min(maxBoardW / cols, maxBoardH / rows));
-  cell = Math.max(cell,56);
-
-  kr = cell * 0.16;
-  margin = Math.ceil(kr) + 4;
-
-  boardW = cols * cell;
-  boardH = rows * cell;
-
-  boardLeft = Math.round((sw - boardW) / 2);
-  boardTop = Math.round(sh * 0.04);
-}
-
-/* ============================================================
-   BUILD PUZZLE
-   ============================================================ */
-
-async function buildLevel(){
-  pieces.forEach(p=>p.el.remove());
-  pieces = [];
-  lockedCount = 0;
-
-  document.querySelectorAll(".confetti").forEach(c=>c.remove());
-  winBox.classList.remove("show");
-
-  computeLayout();
-  buildEdgeSigns();
-
-  const src = await makeSource();
-
-  guideC.width = boardW * SCALE;
-  guideC.height = boardH * SCALE;
-  guideC.style.width = boardW + "px";
-  guideC.style.height = boardH + "px";
-  guideC.style.left = boardLeft + "px";
-  guideC.style.top = boardTop + "px";
-
-  const guideCtx = guideC.getContext("2d");
-  guideCtx.clearRect(0,0,guideC.width,guideC.height);
-  guideCtx.drawImage(src,0,0);
-
-  slotsC.width = (boardW + margin * 2) * SCALE;
-  slotsC.height = (boardH + margin * 2) * SCALE;
-  slotsC.style.width = (boardW + margin * 2) + "px";
-  slotsC.style.height = (boardH + margin * 2) + "px";
-  slotsC.style.left = (boardLeft - margin) + "px";
-  slotsC.style.top = (boardTop - margin) + "px";
-
-  const sx = slotsC.getContext("2d");
-  sx.clearRect(0,0,slotsC.width,slotsC.height);
-  sx.scale(SCALE,SCALE);
-  sx.strokeStyle = "rgba(90,70,140,.35)";
-  sx.lineWidth = 2;
-  sx.setLineDash([6,5]);
-
-  const order = [];
-
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      order.push({c,r});
-    }
-  }
-
-  for(const {c,r} of order){
-    sx.save();
-    sx.translate(c*cell,r*cell);
-    tracePiece(sx,c,r);
-    sx.restore();
-    sx.stroke();
-
-    const pc = document.createElement("canvas");
-    const full = cell + margin * 2;
-
-    pc.width = full * SCALE;
-    pc.height = full * SCALE;
-    pc.style.width = full + "px";
-    pc.style.height = full + "px";
-
-    const px = pc.getContext("2d");
-    px.scale(SCALE,SCALE);
-
-    tracePiece(px,c,r);
-    px.clip();
-
-    px.drawImage(
-      src,
-      (c*cell-margin)*SCALE,
-      (r*cell-margin)*SCALE,
-      full*SCALE,
-      full*SCALE,
-      0,
-      0,
-      full,
-      full
-    );
-
-    px.lineWidth = 3;
-    px.strokeStyle = "rgba(255,255,255,.92)";
-    tracePiece(px,c,r);
-    px.stroke();
-
-    pc.className = "piece";
-
-    const slotX = boardLeft + c * cell - margin;
-    const slotY = boardTop + r * cell - margin;
-
-    const p = {
-      el:pc,
-      col:c,
-      row:r,
-      locked:false,
-      slotX,
-      slotY,
-      w:full
-    };
-
-    placeAt(p,slotX,slotY);
-    pieces.push(p);
-    stage.appendChild(pc);
-    attachDrag(p);
-  }
-
-  scatterPieces();
-  updateHUD();
-
-  lvlNum.textContent = "2";
-  title.textContent = "Level 2: " + LEVEL_2_PUZZLES[puzzleIndex].name;
-
-  say("Let's build " + LEVEL_2_PUZZLES[puzzleIndex].name + "!");
-
-  lastW = stage.clientWidth;
-  lastH = stage.clientHeight;
-}
-
-function scatterPieces(){
-  const sw = stage.clientWidth;
-  const sh = stage.clientHeight;
-  const trayTop = boardTop + boardH + 12;
-
-  const shuffled = [...pieces].sort(()=>Math.random()-.5);
-
-  shuffled.forEach((p,i)=>{
-    const maxX = Math.max(4,sw - p.w - 4);
-    const maxY = Math.max(trayTop,sh - p.w - 4);
-
-    const x = 4 + Math.random() * Math.max(1,(maxX - 4));
-    const y = trayTop + Math.random() * Math.max(1,(maxY - trayTop));
-
-    placeAt(p,x,y);
-    p.el.style.zIndex = 10 + i;
-  });
-}
-
-function placeAt(p,x,y){
-  p.el.style.translate = `${x}px ${y}px`;
-  p.x = x;
-  p.y = y;
-}
-
-function updateHUD(){
-  pieceCt.textContent = lockedCount + "/" + pieces.length;
-}
-
-/* ============================================================
-   DRAG AND DROP
-   ============================================================ */
-
-let zTop = 1000;
-
-function attachDrag(p){
-  let dragging = false;
-  let offX = 0;
-  let offY = 0;
-  let pid = null;
-
-  p.el.addEventListener("pointerdown",e=>{
-    if(p.locked) return;
-
-    initAudio();
-
-    dragging = true;
-    pid = e.pointerId;
-
-    p.el.setPointerCapture(pid);
-
-    const rect = stage.getBoundingClientRect();
-
-    offX = (e.clientX - rect.left) - p.x;
-    offY = (e.clientY - rect.top) - p.y;
-
-    p.el.classList.add("lifting");
-    p.el.style.zIndex = ++zTop;
-
-    Snd.pick();
-    e.preventDefault();
-  });
-
-  p.el.addEventListener("pointermove",e=>{
-    if(!dragging) return;
-
-    const rect = stage.getBoundingClientRect();
-
-    let x = (e.clientX - rect.left) - offX;
-    let y = (e.clientY - rect.top) - offY;
-
-    x = Math.max(-margin,Math.min(x,stage.clientWidth - p.w + margin));
-    y = Math.max(-margin,Math.min(y,stage.clientHeight - p.w + margin));
-
-    placeAt(p,x,y);
-    e.preventDefault();
-  });
-
-  function end(e){
-    if(!dragging) return;
-
-    dragging = false;
-
-    try{
-      p.el.releasePointerCapture(pid);
-    }catch(_){}
-
-    p.el.classList.remove("lifting");
-
-    const dx = p.x - p.slotX;
-    const dy = p.y - p.slotY;
-
-    if(Math.hypot(dx,dy) < cell * 0.55){
-      lockPiece(p);
-    }
-
-    if(e) e.preventDefault();
-  }
-
-  p.el.addEventListener("pointerup",end);
-  p.el.addEventListener("pointercancel",end);
-}
-
-function lockPiece(p){
-  p.locked = true;
-
-  p.el.classList.add("locked","settling");
-
-  placeAt(p,p.slotX,p.slotY);
-
-  p.el.classList.remove("snapped");
-  void p.el.offsetWidth;
-  p.el.classList.add("snapped");
-
-  setTimeout(()=>{
-    p.el.classList.remove("settling");
-  },220);
-
-  p.el.style.zIndex = 5;
-
-  lockedCount++;
-  updateHUD();
-
-  Snd.snap();
-
-  if(lockedCount === pieces.length){
-    win();
-  }
-}
-
-/* ============================================================
-   WIN
-   ============================================================ */
-
-function win(){
-  Snd.win();
-  Snd.cheer();
-
-  const praise = PRAISE[puzzleIndex % PRAISE.length];
-
-  winText.textContent = praise;
-  winSubText.textContent = "Puzzle " + (puzzleIndex + 1) + " of " + LEVEL_2_PUZZLES.length + " complete!";
-
-  say(praise);
-
-  confettiBurst();
-
-  setTimeout(()=>{
-    winBox.classList.add("show");
-  },450);
-}
-
-async function nextPuzzle(){
-  puzzleIndex = (puzzleIndex + 1) % LEVEL_2_PUZZLES.length;
-  await buildLevel();
-}
-
-function confettiBurst(){
-  const colors = ["#ffe066","#ffb3d1","#a8e6a1","#8eccff","#ffb35c","#c9b3ff"];
-  const sw = stage.clientWidth;
-
-  for(let i=0;i<60;i++){
-    const d = document.createElement("div");
-
-    d.className = "confetti";
-    d.style.background = colors[i % colors.length];
-
-    const startX = sw / 2 + (Math.random() - .5) * 80;
-
-    d.style.left = startX + "px";
-    d.style.top = "-20px";
-
-    stage.appendChild(d);
-
-    const dx = (Math.random() - .5) * sw * 0.9;
-    const dy = stage.clientHeight * 0.9 + Math.random() * 120;
-
-    d.animate([
-      {transform:`translate(0,0) rotate(0deg)`,opacity:1},
-      {transform:`translate(${dx}px,${dy}px) rotate(${Math.random()*720}deg)`,opacity:.9}
-    ],{
-      duration:1500 + Math.random() * 900,
-      easing:"cubic-bezier(.2,.6,.3,1)"
-    });
-
-    setTimeout(()=>d.remove(),2400);
-  }
-}
-
-/* ============================================================
-   CONTROLS
-   ============================================================ */
-
-document.getElementById("restartBtn").addEventListener("click",async ()=>{
-  Snd.pick();
-  await buildLevel();
-});
-
-document.getElementById("skipBtn").addEventListener("click",async ()=>{
-  Snd.pick();
-  await nextPuzzle();
-});
-
-document.getElementById("nextBtn").addEventListener("click",async ()=>{
-  Snd.pick();
-  await nextPuzzle();
-});
-
-document.getElementById("homeBtn").addEventListener("click",goHome);
-
-function goHome(){
-  Snd.pick();
-
-  if("speechSynthesis" in window){
-    speechSynthesis.cancel();
-  }
-
-  winBox.classList.remove("show");
-  document.getElementById("tools").classList.remove("show");
-  document.getElementById("gate").style.display = "flex";
-}
-
-const muteBtn = document.getElementById("muteBtn");
-
-muteBtn.addEventListener("click",()=>{
-  muted = !muted;
-
-  muteBtn.textContent = muted ? "🔇" : "🔊";
-  muteBtn.dataset.icon = muted ? "🔇" : "🔊";
-  muteBtn.classList.toggle("muted",muted);
-
-  if(muted && "speechSynthesis" in window){
-    speechSynthesis.cancel();
-  }
-
-  if(!muted){
-    initAudio();
-    Snd.pick();
-  }
-});
-
-document.querySelectorAll(".level-btn").forEach(btn=>{
-  btn.addEventListener("click",async ()=>{
-    const level = Number(btn.dataset.level);
-
-    if(level === 2){
-      await startLevel2();
-    }else{
-      showToast("Level " + level + " coming soon!");
-      Snd.pick();
-    }
-  });
-});
-
-function showToast(message){
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(()=>{
-    toast.classList.remove("show");
-  },1600);
-}
-
-async function startLevel2(){
-  initAudio();
-
-  puzzleIndex = 0;
-
-  document.getElementById("gate").style.display = "none";
-  document.getElementById("tools").classList.add("show");
-
-  showToast("Loading puzzle...");
-
-  try{
-    await buildLevel();
-    showToast("Drag the pieces!");
-  }catch(error){
-    console.error("Puzzle failed to load:", error);
-
-    document.getElementById("gate").style.display = "flex";
-    document.getElementById("tools").classList.remove("show");
-
-    showToast("Image name problem!");
-    alert("Puzzle image failed to load. Please check the image filenames in puzzle/assets.");
-  }
-}
-
-/* ============================================================
-   RESIZE / ORIENTATION
-   ============================================================ */
-
-let rt = null;
-
-window.addEventListener("resize",()=>{
-  clearTimeout(rt);
-
-  rt = setTimeout(async ()=>{
-    const w = stage.clientWidth;
-    const h = stage.clientHeight;
-
-    if(w !== lastW || Math.abs(h-lastH) > lastH * 0.25){
-      if(document.getElementById("gate").style.display === "none"){
-        await buildLevel();
-      }
-    }
-  },180);
-});
+const PRAISE=["You did it!","Great job!","Awesome!","Yay!","Wonderful!","Amazing!","Super!","Nice work!"];
+const SCALE=2;let puzzleIndex=0,cols=3,rows=2,cell,margin,kr,boardLeft,boardTop,boardW,boardH,pieces=[],lockedCount=0,muted=false,lastW=0,lastH=0,V,H;
+const stage=document.getElementById("stage"),guideC=document.getElementById("guide"),slotsC=document.getElementById("slots"),lvlNum=document.getElementById("lvlNum"),pieceCt=document.getElementById("pieceCount"),winBox=document.getElementById("win"),winText=document.getElementById("winText"),winSubText=document.getElementById("winSubText"),title=document.getElementById("title"),toast=document.getElementById("toast");
+let audio=null;function initAudio(){if(audio)return;try{audio=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+function beep(freq,dur,type="sine",vol=.22){if(!audio||muted)return;const t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audio.destination);o.start(t);o.stop(t+dur+.02)}
+const Snd={pick(){beep(520,.08,"triangle",.18)},snap(){beep(440,.07,"square",.18);beep(660,.12,"sine",.2)},win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,"triangle",.25),i*120))},cheer(){for(let i=0;i<10;i++)setTimeout(()=>beep(700+Math.random()*500,.1,"sine",.12),i*70)}};
+let voice=null;function pickVoice(){if(!("speechSynthesis" in window))return;const all=speechSynthesis.getVoices();if(!all.length)return;const en=all.filter(v=>/^en[-_]?/i.test(v.lang));const prefs=[/natural/i,/google us english/i,/google uk english female/i,/samantha/i,/karen/i,/tessa/i,/aria/i,/jenny/i,/female/i];for(const re of prefs){const m=en.find(v=>re.test(v.name));if(m){voice=m;return}}voice=en[0]||all[0]}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.addEventListener("voiceschanged",pickVoice)}function say(text){if(muted||!("speechSynthesis" in window))return;try{if(!voice)pickVoice();const u=new SpeechSynthesisUtterance(text);if(voice)u.voice=voice;u.lang="en-US";u.rate=.92;u.pitch=1.12;u.volume=1;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+const imageCache={};function loadImage(src){if(imageCache[src])return imageCache[src];imageCache[src]=new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{console.error("Image failed to load:",src);resolve(null)};img.src=src});return imageCache[src]}
+function drawPlaceholder(ctx,name){ctx.fillStyle="#fff7d6";ctx.fillRect(0,0,boardW,boardH);ctx.fillStyle="#bfe6ff";ctx.beginPath();ctx.arc(boardW*.5,boardH*.36,Math.min(boardW,boardH)*.22,0,Math.PI*2);ctx.fill();ctx.fillStyle="#3a2b5c";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font="bold "+Math.floor(boardH*.18)+"px Comic Sans MS, Arial";ctx.fillText("🧩",boardW*.5,boardH*.35);ctx.font="bold "+Math.floor(boardH*.08)+"px Comic Sans MS, Arial";ctx.fillText(name,boardW*.5,boardH*.68)}
+async function makeSource(){const puzzle=LEVEL_2_PUZZLES[puzzleIndex];const c=document.createElement("canvas");c.width=boardW*SCALE;c.height=boardH*SCALE;const x=c.getContext("2d");x.scale(SCALE,SCALE);const bg=x.createLinearGradient(0,0,boardW,boardH);bg.addColorStop(0,"#fff7d6");bg.addColorStop(1,"#dff4ff");x.fillStyle=bg;x.fillRect(0,0,boardW,boardH);const img=await loadImage(puzzle.image);if(!img){drawPlaceholder(x,puzzle.name);return c}const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;const padding=.72;const scale=Math.min(boardW/iw,boardH/ih)*padding;const dw=iw*scale,dh=ih*scale,dx=(boardW-dw)/2,dy=(boardH-dh)/2;x.drawImage(img,dx,dy,dw,dh);return c}
+function buildEdgeSigns(){V=[];H=[];for(let r=0;r<rows;r++){V[r]=[];for(let c=0;c<=cols;c++)V[r][c]=c===0||c===cols?0:(Math.random()<.5?1:-1)}for(let r=0;r<=rows;r++){H[r]=[];for(let c=0;c<cols;c++)H[r][c]=r===0||r===rows?0:(Math.random()<.5?1:-1)}}
+function edgeOut(side,c,r){if(side==="top")return r===0?null:H[r][c]===-1;if(side==="bottom")return r===rows-1?null:H[r+1][c]===1;if(side==="left")return c===0?null:V[r][c]===-1;if(side==="right")return c===cols-1?null:V[r][c+1]===1}
+function tracePiece(x,c,r){const m=margin,s=cell,TL=[m,m],TR=[m+s,m],BR=[m+s,m+s],BL=[m,m+s],cx=m+s/2,cy=m+s/2;x.beginPath();x.moveTo(...TL);drawEdge(x,"top",edgeOut("top",c,r),cx,m,TR);drawEdge(x,"right",edgeOut("right",c,r),m+s,cy,BR);drawEdge(x,"bottom",edgeOut("bottom",c,r),cx,m+s,BL);drawEdge(x,"left",edgeOut("left",c,r),m,cy,TL);x.closePath()}
+function drawEdge(x,side,out,mx,my,end){if(out===null){x.lineTo(...end);return}const acw=!out;if(side==="top"){x.lineTo(mx-kr,my);x.arc(mx,my,kr,Math.PI,0,acw)}if(side==="right"){x.lineTo(mx,my-kr);x.arc(mx,my,kr,-Math.PI/2,Math.PI/2,acw)}if(side==="bottom"){x.lineTo(mx+kr,my);x.arc(mx,my,kr,0,Math.PI,acw)}if(side==="left"){x.lineTo(mx,my+kr);x.arc(mx,my,kr,Math.PI/2,-Math.PI/2,acw)}x.lineTo(...end)}
+function computeLayout(){cols=3;rows=2;const sw=stage.clientWidth,sh=stage.clientHeight,maxBoardW=sw*.94,maxBoardH=sh*.50;cell=Math.floor(Math.min(maxBoardW/cols,maxBoardH/rows));cell=Math.max(cell,56);kr=cell*.16;margin=Math.ceil(kr)+4;boardW=cols*cell;boardH=rows*cell;boardLeft=Math.round((sw-boardW)/2);boardTop=Math.round(sh*.04)}
+async function buildLevel(){pieces.forEach(p=>p.el.remove());pieces=[];lockedCount=0;document.querySelectorAll(".confetti").forEach(c=>c.remove());winBox.classList.remove("show");computeLayout();buildEdgeSigns();const src=await makeSource();guideC.width=boardW*SCALE;guideC.height=boardH*SCALE;guideC.style.width=boardW+"px";guideC.style.height=boardH+"px";guideC.style.left=boardLeft+"px";guideC.style.top=boardTop+"px";const gctx=guideC.getContext("2d");gctx.clearRect(0,0,guideC.width,guideC.height);gctx.drawImage(src,0,0);slotsC.width=(boardW+margin*2)*SCALE;slotsC.height=(boardH+margin*2)*SCALE;slotsC.style.width=(boardW+margin*2)+"px";slotsC.style.height=(boardH+margin*2)+"px";slotsC.style.left=(boardLeft-margin)+"px";slotsC.style.top=(boardTop-margin)+"px";const sx=slotsC.getContext("2d");sx.setTransform(1,0,0,1,0,0);sx.clearRect(0,0,slotsC.width,slotsC.height);sx.scale(SCALE,SCALE);sx.strokeStyle="rgba(90,70,140,.35)";sx.lineWidth=2;sx.setLineDash([6,5]);const order=[];for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)order.push({c,r});for(const {c,r} of order){sx.save();sx.translate(c*cell,r*cell);tracePiece(sx,c,r);sx.restore();sx.stroke();const pc=document.createElement("canvas"),full=cell+margin*2;pc.width=full*SCALE;pc.height=full*SCALE;pc.style.width=full+"px";pc.style.height=full+"px";const px=pc.getContext("2d");px.scale(SCALE,SCALE);tracePiece(px,c,r);px.clip();px.drawImage(src,(c*cell-margin)*SCALE,(r*cell-margin)*SCALE,full*SCALE,full*SCALE,0,0,full,full);px.lineWidth=3;px.strokeStyle="rgba(255,255,255,.92)";tracePiece(px,c,r);px.stroke();pc.className="piece";const slotX=boardLeft+c*cell-margin,slotY=boardTop+r*cell-margin,p={el:pc,col:c,row:r,locked:false,slotX,slotY,w:full};placeAt(p,slotX,slotY);pieces.push(p);stage.appendChild(pc);attachDrag(p)}scatterPieces();updateHUD();lvlNum.textContent="2";title.textContent="Level 2: "+LEVEL_2_PUZZLES[puzzleIndex].name;say("Let's build "+LEVEL_2_PUZZLES[puzzleIndex].name+"!");lastW=stage.clientWidth;lastH=stage.clientHeight}
+function scatterPieces(){const sw=stage.clientWidth,sh=stage.clientHeight,trayTop=boardTop+boardH+12,shuffled=[...pieces].sort(()=>Math.random()-.5);shuffled.forEach((p,i)=>{const maxX=Math.max(4,sw-p.w-4),maxY=Math.max(trayTop,sh-p.w-4),x=4+Math.random()*Math.max(1,maxX-4),y=trayTop+Math.random()*Math.max(1,maxY-trayTop);placeAt(p,x,y);p.el.style.zIndex=10+i})}
+function placeAt(p,x,y){p.el.style.translate=`${x}px ${y}px`;p.x=x;p.y=y}function updateHUD(){pieceCt.textContent=lockedCount+"/"+pieces.length}
+let zTop=1000;function attachDrag(p){let dragging=false,offX=0,offY=0,pid=null;p.el.addEventListener("pointerdown",e=>{if(p.locked)return;initAudio();dragging=true;pid=e.pointerId;p.el.setPointerCapture(pid);const rect=stage.getBoundingClientRect();offX=e.clientX-rect.left-p.x;offY=e.clientY-rect.top-p.y;p.el.classList.add("lifting");p.el.style.zIndex=++zTop;Snd.pick();e.preventDefault()});p.el.addEventListener("pointermove",e=>{if(!dragging)return;const rect=stage.getBoundingClientRect();let x=e.clientX-rect.left-offX,y=e.clientY-rect.top-offY;x=Math.max(-margin,Math.min(x,stage.clientWidth-p.w+margin));y=Math.max(-margin,Math.min(y,stage.clientHeight-p.w+margin));placeAt(p,x,y);e.preventDefault()});function end(e){if(!dragging)return;dragging=false;try{p.el.releasePointerCapture(pid)}catch(_){}p.el.classList.remove("lifting");const dx=p.x-p.slotX,dy=p.y-p.slotY;if(Math.hypot(dx,dy)<cell*.55)lockPiece(p);if(e)e.preventDefault()}p.el.addEventListener("pointerup",end);p.el.addEventListener("pointercancel",end)}
+function lockPiece(p){p.locked=true;p.el.classList.add("locked","settling");placeAt(p,p.slotX,p.slotY);p.el.classList.remove("snapped");void p.el.offsetWidth;p.el.classList.add("snapped");setTimeout(()=>p.el.classList.remove("settling"),220);p.el.style.zIndex=5;lockedCount++;updateHUD();Snd.snap();if(lockedCount===pieces.length)win()}
+function win(){Snd.win();Snd.cheer();const praise=PRAISE[puzzleIndex%PRAISE.length];winText.textContent=praise;winSubText.textContent="Puzzle "+(puzzleIndex+1)+" of "+LEVEL_2_PUZZLES.length+" complete!";say(praise);confettiBurst();setTimeout(()=>winBox.classList.add("show"),450)}
+async function nextPuzzle(){puzzleIndex=(puzzleIndex+1)%LEVEL_2_PUZZLES.length;await buildLevel()}
+function confettiBurst(){const colors=["#ffe066","#ffb3d1","#a8e6a1","#8eccff","#ffb35c","#c9b3ff"],sw=stage.clientWidth;for(let i=0;i<60;i++){const d=document.createElement("div");d.className="confetti";d.style.background=colors[i%colors.length];d.style.left=sw/2+(Math.random()-.5)*80+"px";d.style.top="-20px";stage.appendChild(d);const dx=(Math.random()-.5)*sw*.9,dy=stage.clientHeight*.9+Math.random()*120;d.animate([{transform:"translate(0,0) rotate(0deg)",opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1500+Math.random()*900,easing:"cubic-bezier(.2,.6,.3,1)"});setTimeout(()=>d.remove(),2400)}}
+document.getElementById("restartBtn").addEventListener("click",async()=>{Snd.pick();await buildLevel()});document.getElementById("skipBtn").addEventListener("click",async()=>{Snd.pick();await nextPuzzle()});document.getElementById("nextBtn").addEventListener("click",async()=>{Snd.pick();await nextPuzzle()});document.getElementById("homeBtn").addEventListener("click",goHome);
+function goHome(){Snd.pick();if("speechSynthesis" in window)speechSynthesis.cancel();winBox.classList.remove("show");document.getElementById("tools").classList.remove("show");document.getElementById("gate").style.display="flex"}
+const muteBtn=document.getElementById("muteBtn");muteBtn.addEventListener("click",()=>{muted=!muted;muteBtn.textContent=muted?"🔇":"🔊";muteBtn.dataset.icon=muted?"🔇":"🔊";muteBtn.classList.toggle("muted",muted);if(muted&&"speechSynthesis" in window)speechSynthesis.cancel();if(!muted){initAudio();Snd.pick()}});
+document.querySelectorAll(".level-btn").forEach(btn=>{btn.addEventListener("click",async()=>{const level=Number(btn.dataset.level);if(level===2)await startLevel2();else{showToast("Level "+level+" coming soon!");Snd.pick()}})});
+function showToast(message){toast.textContent=message;toast.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove("show"),1600)}
+async function startLevel2(){initAudio();puzzleIndex=0;document.getElementById("gate").style.display="none";document.getElementById("tools").classList.add("show");showToast("Loading puzzle...");await buildLevel();showToast("Drag the pieces!")}
+let rt=null;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(async()=>{const w=stage.clientWidth,h=stage.clientHeight;if(w!==lastW||Math.abs(h-lastH)>lastH*.25){if(document.getElementById("gate").style.display==="none")await buildLevel()}},180)});
 </script>
+</body>
+</html>
