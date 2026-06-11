@@ -1,665 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<title>Puzzle Explorer - Level 2</title>
-
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&display=swap");
-
-:root{
-  --sky:#8eccff;
-  --sky2:#bfe6ff;
-  --orange:#ffb35c;
-  --green:#a8e6a1;
-  --yellow:#ffe066;
-  --pink:#ffb3d1;
-  --purple:#c9b3ff;
-  --ink:#3a2b5c;
-  --board:#fffef7;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  -webkit-user-select:none;
-  user-select:none;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  height:100%;
-}
-
-body{
-  font-family:"Fredoka","Baloo 2","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;
-  color:var(--ink);
-  height:100vh;
-  height:100dvh;
-  overflow:hidden;
-  position:fixed;
-  inset:0;
-  overscroll-behavior:none;
-  touch-action:none;
-  background:
-    radial-gradient(120% 80% at 50% -10%, var(--sky2) 0%, var(--sky) 55%, var(--purple) 130%);
-}
-
-#app{
-  display:flex;
-  flex-direction:column;
-  height:100%;
-  width:100%;
-}
-
-/* ---------------- TOP BAR ---------------- */
-
-#bar{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:max(10px,env(safe-area-inset-top)) 14px 10px;
-  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0));
-}
-
-#title{
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  font-weight:800;
-  color:#ffffff;
-  letter-spacing:.01em;
-  text-shadow:0 3px 0 rgba(34,117,190,.75),0 8px 15px rgba(32,87,150,.24);
-  flex:1;
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-size:clamp(18px,5vw,28px);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-#title::before{
-  content:"";
-  width:34px;
-  height:34px;
-  flex:0 0 auto;
-  border-radius:13px;
-  background:
-    radial-gradient(circle at 30% 22%,rgba(255,255,255,.62),transparent 25%),
-    linear-gradient(180deg,#ffd86c,#ff9d4d);
-  box-shadow:0 5px 0 #d8752e,0 9px 14px rgba(48,67,120,.18),inset 0 -4px 0 rgba(0,0,0,.10);
-}
-
-.chip{
-  min-width:62px;
-  background:rgba(255,255,255,.94);
-  border:3px solid rgba(255,255,255,.7);
-  border-radius:20px;
-  padding:7px 11px;
-  color:#17406b;
-  box-shadow:0 6px 0 rgba(38,93,142,.16),0 12px 18px rgba(31,84,142,.12);
-  font-size:clamp(12px,3.4vw,16px);
-  font-weight:700;
-  line-height:1;
-  text-align:center;
-}
-
-.chip small{
-  display:block;
-  font-size:.62em;
-  font-weight:700;
-  color:#4d7aa5;
-  letter-spacing:.04em;
-}
-
-.chip span{
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  color:#174ab6;
-  font-size:1.18em;
-}
-
-/* ---------------- ICON BUTTONS ---------------- */
-
-.icon-btn{
-  position:relative;
-  width:clamp(48px,12vw,60px);
-  height:clamp(48px,12vw,60px);
-  border:none;
-  border-radius:20px;
-  cursor:pointer;
-  font-size:0;
-  line-height:1;
-  background:
-    radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),
-    linear-gradient(180deg,#8fea55,#3caf32);
-  box-shadow:0 8px 0 #267929,0 15px 22px rgba(40,85,60,.25),inset 0 -5px 0 rgba(0,0,0,.10);
-  transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
-}
-
-.icon-btn::before{
-  content:attr(data-icon);
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  font-size:clamp(22px,6vw,29px);
-  filter:drop-shadow(0 2px 0 rgba(255,255,255,.22));
-}
-
-.icon-btn::after{
-  content:"";
-  position:absolute;
-  left:16%;
-  top:12%;
-  width:34%;
-  height:20%;
-  border-radius:999px;
-  background:rgba(255,255,255,.42);
-  transform:rotate(-20deg);
-}
-
-.icon-btn:hover{
-  filter:saturate(1.08) brightness(1.03);
-  transform:translateY(-2px);
-}
-
-.icon-btn:active{
-  transform:translateY(5px);
-  box-shadow:0 3px 0 #267929,0 8px 12px rgba(40,85,60,.20),inset 0 -4px 0 rgba(0,0,0,.10);
-}
-
-#homeBtn{
-  background:
-    radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),
-    linear-gradient(180deg,#68c7ff,#218de8);
-  box-shadow:0 8px 0 #1166b3,0 15px 22px rgba(30,75,130,.24),inset 0 -5px 0 rgba(0,0,0,.10);
-}
-
-#homeBtn:active{
-  box-shadow:0 3px 0 #1166b3,0 8px 12px rgba(30,75,130,.20),inset 0 -4px 0 rgba(0,0,0,.10);
-}
-
-#muteBtn.muted{
-  background:
-    radial-gradient(circle at 28% 20%,rgba(255,255,255,.58),transparent 28%),
-    linear-gradient(180deg,#ff8fb7,#ef3e83);
-  box-shadow:0 8px 0 #b82062,0 15px 22px rgba(120,30,80,.22),inset 0 -5px 0 rgba(0,0,0,.10);
-}
-
-/* ---------------- STAGE ---------------- */
-
-#stage{
-  position:relative;
-  flex:1 1 auto;
-  width:100%;
-  overflow:hidden;
-  touch-action:none;
-  background:
-    radial-gradient(circle at 18% 16%,rgba(255,255,255,.26),transparent 18%),
-    radial-gradient(circle at 83% 20%,rgba(255,255,255,.18),transparent 18%);
-}
-
-#guide{
-  position:absolute;
-  border-radius:14px;
-  opacity:.20;
-  pointer-events:none;
-  box-shadow:0 0 0 5px rgba(255,255,255,.65) inset,0 16px 28px rgba(34,84,120,.12);
-}
-
-#slots{
-  position:absolute;
-  pointer-events:none;
-}
-
-.piece{
-  position:absolute;
-  top:0;
-  left:0;
-  touch-action:none;
-  cursor:grab;
-  filter:drop-shadow(0 7px 7px rgba(31,40,72,.26));
-  will-change:translate,scale;
-  transition:filter .12s ease, transform .12s ease;
-}
-
-.piece.settling{
-  transition:translate .18s ease-out;
-}
-
-.piece.locked{
-  cursor:default;
-  filter:drop-shadow(0 2px 2px rgba(31,40,72,.10));
-}
-
-.piece.lifting{
-  cursor:grabbing;
-  filter:drop-shadow(0 18px 16px rgba(31,40,72,.35));
-}
-
-/* ---------------- TOOLS ---------------- */
-
-#tools{
-  flex:0 0 auto;
-  display:none;
-  gap:12px;
-  justify-content:center;
-  padding:10px 12px max(14px,env(safe-area-inset-bottom));
-}
-
-#tools.show{
-  display:flex;
-}
-
-.big-btn{
-  position:relative;
-  overflow:hidden;
-  border:none;
-  cursor:pointer;
-  color:#fff;
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  font-weight:800;
-  letter-spacing:.01em;
-  font-size:clamp(15px,4.2vw,20px);
-  padding:12px 18px;
-  border:4px solid rgba(255,255,255,.55);
-  border-radius:26px;
-  text-shadow:0 2px 0 rgba(0,0,0,.12);
-  box-shadow:0 8px 0 rgba(0,0,0,.18),0 16px 24px rgba(40,60,120,.16),inset 0 -5px 0 rgba(0,0,0,.08);
-  transition:transform .08s;
-}
-
-.big-btn::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(115deg,transparent 0 35%,rgba(255,255,255,.42) 45%,transparent 58%);
-  transform:translateX(-120%);
-  transition:transform .45s ease;
-}
-
-.big-btn:hover::after{
-  transform:translateX(120%);
-}
-
-.big-btn:active{
-  transform:translateY(4px);
-  box-shadow:0 2px 0 rgba(0,0,0,.18);
-}
-
-#restartBtn{
-  background:linear-gradient(180deg,#ffca70,#ff9b3f);
-}
-
-#skipBtn{
-  background:linear-gradient(180deg,#bca8ff,#826af5);
-}
-
-#nextBtn{
-  background:linear-gradient(180deg,#94eb80,#53c243);
-  color:#1e6b34;
-  font-size:clamp(20px,6vw,28px);
-  padding:16px 34px;
-  border-radius:28px;
-}
-
-/* ---------------- LANDING GATE ---------------- */
-
-#gate{
-  position:absolute;
-  inset:0;
-  z-index:50;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  text-align:center;
-  padding:24px;
-  overflow:hidden;
-  perspective:1000px;
-  background:
-    radial-gradient(circle at 50% 10%,rgba(255,255,255,.45),transparent 24%),
-    linear-gradient(180deg,#bdeeff 0%,#83d2ff 52%,#b7a8ff 100%);
-}
-
-#gate::before{
-  content:"";
-  position:absolute;
-  left:6%;
-  right:6%;
-  bottom:9%;
-  height:28%;
-  border-radius:50% 50% 0 0;
-  background:linear-gradient(180deg,#9cea7b,#59c650);
-  box-shadow:inset 0 12px 0 rgba(255,255,255,.18);
-  opacity:.72;
-}
-
-#scene{
-  position:relative;
-  width:min(78vw,340px);
-  height:min(30vh,210px);
-  transform-style:preserve-3d;
-  transform:rotateX(10deg);
-  filter:drop-shadow(0 18px 22px rgba(55,40,100,.16));
-}
-
-.float{
-  position:absolute;
-  width:clamp(54px,16vw,86px);
-  aspect-ratio:1;
-  border-radius:24%;
-  border:4px solid rgba(255,255,255,.42);
-  transform-style:preserve-3d;
-  animation:floaty 4.2s ease-in-out infinite;
-  box-shadow:
-    0 16px 20px rgba(60,40,100,.30),
-    inset 0 -7px 0 rgba(0,0,0,.14),
-    inset 0 7px 0 rgba(255,255,255,.45);
-}
-
-.float::before{
-  content:"";
-  position:absolute;
-  top:-22%;
-  left:50%;
-  width:36%;
-  aspect-ratio:1;
-  margin-left:-18%;
-  border-radius:50%;
-  background:inherit;
-  box-shadow:inset 0 4px 0 rgba(255,255,255,.4),0 4px 6px rgba(60,40,100,.2);
-}
-
-.f1{left:6%; top:14%; background:var(--yellow);--z:40px; --r:-8deg; animation-delay:0s;}
-.f2{left:60%;top:4%;  background:var(--pink);  --z:80px; --r:10deg; animation-delay:.7s;}
-.f3{left:32%;top:42%; background:var(--green); --z:120px;--r:-4deg; animation-delay:.3s;}
-.f4{left:68%;top:52%; background:var(--sky);   --z:60px; --r:7deg;  animation-delay:1s;}
-.f5{left:10%;top:66%; background:var(--purple);--z:24px; --r:-12deg;animation-delay:1.4s;}
-
-@keyframes floaty{
-  0%,100%{translate:0 0 var(--z); rotate:var(--r);}
-  50%{translate:0 -16px var(--z); rotate:calc(var(--r) * -1);}
-}
-
-#gate h1{
-  position:relative;
-  z-index:2;
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  color:#fff;
-  font-size:clamp(32px,9.5vw,58px);
-  letter-spacing:.5px;
-  text-shadow:0 4px 0 #4f96d8,0 10px 16px rgba(40,20,80,.28);
-}
-
-#gate p{
-  position:relative;
-  z-index:2;
-  color:#fff;
-  font-size:clamp(16px,4.5vw,22px);
-  max-width:28ch;
-  line-height:1.35;
-  font-weight:700;
-  background:rgba(255,255,255,.28);
-  border-radius:999px;
-  padding:8px 16px;
-  text-shadow:0 2px 4px rgba(40,20,80,.30);
-}
-
-#levelButtons{
-  position:relative;
-  z-index:2;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(130px,1fr));
-  gap:12px;
-  width:min(520px,92vw);
-}
-
-.level-btn{
-  border:none;
-  border-radius:28px;
-  padding:14px 18px;
-  min-height:62px;
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  font-size:clamp(18px,5vw,24px);
-  font-weight:800;
-  color:#fff;
-  cursor:pointer;
-  text-shadow:0 3px 0 rgba(0,0,0,.16);
-  box-shadow:0 9px 0 rgba(0,0,0,.18),0 15px 22px rgba(40,85,60,.22),inset 0 -5px 0 rgba(0,0,0,.08);
-}
-
-.level-btn:active{
-  transform:translateY(5px);
-  box-shadow:0 3px 0 rgba(0,0,0,.18),0 7px 12px rgba(40,85,60,.18),inset 0 -4px 0 rgba(0,0,0,.08);
-}
-
-.level-btn.active{
-  background:
-    radial-gradient(circle at 30% 20%,rgba(255,255,255,.48),transparent 28%),
-    linear-gradient(180deg,#8fea55,#3caf32);
-}
-
-.level-btn.locked{
-  background:
-    radial-gradient(circle at 30% 20%,rgba(255,255,255,.48),transparent 28%),
-    linear-gradient(180deg,#bca8ff,#826af5);
-  opacity:.86;
-}
-
-.level-btn small{
-  display:block;
-  font-size:.55em;
-  margin-top:2px;
-}
-
-/* ---------------- WIN ---------------- */
-
-#win{
-  position:absolute;
-  inset:0;
-  z-index:60;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  text-align:center;
-  backdrop-filter:blur(6px);
-  background:rgba(46,62,128,.24);
-}
-
-#win.show{
-  display:flex;
-}
-
-#winCard{
-  background:#fff;
-  border-radius:30px;
-  padding:26px 30px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
-  border:5px solid rgba(255,255,255,.75);
-  box-shadow:0 16px 0 rgba(44,76,128,.18),0 28px 44px rgba(40,60,120,.22);
-  animation:pop .5s cubic-bezier(.2,1.5,.4,1);
-}
-
-#winCard .star{
-  font-size:clamp(60px,18vw,110px);
-  animation:bob 1.6s ease-in-out infinite;
-}
-
-#winCard h2{
-  font-family:"Baloo 2","Fredoka",system-ui,sans-serif;
-  font-size:clamp(28px,8vw,46px);
-  color:#ff8a3d;
-  text-shadow:0 3px 0 rgba(255,230,190,.8);
-}
-
-#winCard p{
-  color:#5c4a7a;
-  font-weight:700;
-  font-size:clamp(15px,4vw,20px);
-}
-
-/* ---------------- ANIMATIONS ---------------- */
-
-@keyframes bob{
-  0%,100%{transform:translateY(0) rotate(-2deg);}
-  50%{transform:translateY(-12px) rotate(2deg);}
-}
-
-@keyframes pop{
-  0%{transform:scale(0);}
-  60%{transform:scale(1.12);}
-  100%{transform:scale(1);}
-}
-
-@keyframes snapPulse{
-  0%{scale:1.18;}
-  100%{scale:1;}
-}
-
-.snapped{
-  animation:snapPulse .28s ease-out;
-}
-
-.confetti{
-  position:absolute;
-  width:14px;
-  height:14px;
-  border-radius:3px;
-  z-index:55;
-  pointer-events:none;
-}
-
-#toast{
-  position:absolute;
-  z-index:100;
-  left:50%;
-  bottom:14%;
-  transform:translateX(-50%) translateY(20px);
-  background:rgba(255,255,255,.94);
-  color:#17406b;
-  font-weight:800;
-  padding:12px 18px;
-  border-radius:999px;
-  box-shadow:0 8px 18px rgba(31,84,142,.18);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s ease;
-}
-
-#toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-
-@media (max-width:640px){
-  #bar{
-    gap:7px;
-    padding:max(8px,env(safe-area-inset-top)) 8px 8px;
-  }
-
-  .chip{
-    min-width:52px;
-    padding:6px 8px;
-    border-radius:16px;
-  }
-
-  .icon-btn{
-    border-radius:17px;
-  }
-
-  #tools{
-    gap:8px;
-  }
-
-  .big-btn{
-    border-radius:22px;
-    padding:11px 14px;
-  }
-
-  #levelButtons{
-    grid-template-columns:1fr;
-    width:min(360px,90vw);
-  }
-
-  #scene{
-    height:min(25vh,170px);
-  }
-}
-</style>
-</head>
-
-<body>
-<div id="app">
-
-  <div id="bar">
-    <button id="homeBtn" class="icon-btn" data-icon="🏠" aria-label="Back to menu">🏠</button>
-    <div id="title">Puzzle Explorer</div>
-    <div class="chip"><small>LEVEL</small><span id="lvlNum">2</span></div>
-    <div class="chip"><small>PIECES</small><span id="pieceCount">0/6</span></div>
-    <button id="muteBtn" class="icon-btn" data-icon="🔊" aria-label="Sound on or off">🔊</button>
-  </div>
-
-  <div id="stage">
-    <canvas id="guide"></canvas>
-    <canvas id="slots"></canvas>
-
-    <div id="gate">
-      <div id="scene">
-        <div class="float f1"></div>
-        <div class="float f2"></div>
-        <div class="float f3"></div>
-        <div class="float f4"></div>
-        <div class="float f5"></div>
-      </div>
-
-      <h1>Puzzle Explorer</h1>
-      <p>Pick a level and build the picture!</p>
-
-      <div id="levelButtons">
-        <button class="level-btn locked" data-level="1">Level 1 <small>4 pieces soon</small></button>
-        <button class="level-btn active" data-level="2">Level 2 <small>6 pieces</small></button>
-        <button class="level-btn locked" data-level="3">Level 3 <small>8 pieces soon</small></button>
-        <button class="level-btn locked" data-level="4">Level 4 <small>10 pieces soon</small></button>
-        <button class="level-btn locked" data-level="5">Level 5 <small>16 pieces soon</small></button>
-      </div>
-    </div>
-
-    <div id="win">
-      <div id="winCard">
-        <div class="star">⭐</div>
-        <h2 id="winText">You did it!</h2>
-        <p id="winSubText">Great puzzle work!</p>
-        <button id="nextBtn" class="big-btn">Next Puzzle →</button>
-      </div>
-    </div>
-
-    <div id="toast">Coming soon!</div>
-  </div>
-
-  <div id="tools">
-    <button id="restartBtn" class="big-btn">🔄 Restart</button>
-    <button id="skipBtn" class="big-btn">Skip ⏭</button>
-  </div>
-</div>
-
 <script>
 /* ============================================================
    LEVEL 2 DATA
    Level 2 = 6 puzzle pieces = 3 columns x 2 rows
-   Put all images inside /assets folder in GitHub.
+   Images must be inside:
+   F1 / puzzle / assets /
    ============================================================ */
 
 const LEVEL_2_PUZZLES = [
@@ -683,6 +27,7 @@ const LEVEL_2_PUZZLES = [
   { name:"Blue Whale", image:"assets/whale .png" },
   { name:"Happy Whale", image:"assets/whale 1.png" }
 ];
+
 const PRAISE = [
   "You did it!",
   "Great job!",
@@ -699,9 +44,8 @@ const PRAISE = [
    ============================================================ */
 
 const SCALE = 2;
-let levelIndex = 1;
-let puzzleIndex = 0;
 
+let puzzleIndex = 0;
 let cols = 3;
 let rows = 2;
 let cell, margin, kr;
@@ -711,7 +55,6 @@ let lockedCount = 0;
 let muted = false;
 let lastW = 0;
 let lastH = 0;
-
 let V, H;
 
 const stage = document.getElementById("stage");
@@ -777,7 +120,10 @@ const Snd = {
   }
 };
 
-/* Optional kid-friendly voice */
+/* ============================================================
+   VOICE
+   ============================================================ */
+
 let voice = null;
 
 function pickVoice(){
@@ -787,6 +133,7 @@ function pickVoice(){
   if(!all.length) return;
 
   const en = all.filter(v=>/^en[-_]?/i.test(v.lang));
+
   const prefs = [
     /natural/i,
     /google us english/i,
@@ -836,6 +183,8 @@ function say(text){
 
 /* ============================================================
    IMAGE LOADING
+   This version will not silently fail.
+   If an image is missing, it draws a friendly placeholder.
    ============================================================ */
 
 const imageCache = {};
@@ -845,12 +194,40 @@ function loadImage(src){
 
   imageCache[src] = new Promise((resolve,reject)=>{
     const img = new Image();
-    img.onload = ()=>resolve(img);
-    img.onerror = reject;
+
+    img.onload = ()=>{
+      console.log("Loaded image:", src);
+      resolve(img);
+    };
+
+    img.onerror = ()=>{
+      console.error("Image failed to load:", src);
+      reject(new Error("Image failed to load: " + src));
+    };
+
     img.src = src;
   });
 
   return imageCache[src];
+}
+
+function drawPlaceholder(ctx, name){
+  ctx.fillStyle = "#fff7d6";
+  ctx.fillRect(0,0,boardW,boardH);
+
+  ctx.fillStyle = "#bfe6ff";
+  ctx.beginPath();
+  ctx.arc(boardW*0.50, boardH*0.36, Math.min(boardW,boardH)*0.22, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = "#3a2b5c";
+  ctx.font = "bold " + Math.floor(boardH*0.18) + "px Comic Sans MS, Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("🧩", boardW*0.50, boardH*0.35);
+
+  ctx.font = "bold " + Math.floor(boardH*0.08) + "px Comic Sans MS, Arial";
+  ctx.fillText(name, boardW*0.50, boardH*0.68);
 }
 
 async function makeSource(){
@@ -863,23 +240,32 @@ async function makeSource(){
   const x = c.getContext("2d");
   x.scale(SCALE,SCALE);
 
-  const img = await loadImage(puzzle.image);
+  try{
+    const img = await loadImage(puzzle.image);
 
-  const iw = img.naturalWidth || img.width;
-  const ih = img.naturalHeight || img.height;
+    const iw = img.naturalWidth || img.width;
+    const ih = img.naturalHeight || img.height;
 
-  const scale = Math.max(boardW / iw, boardH / ih);
-  const dw = iw * scale;
-  const dh = ih * scale;
-  const dx = (boardW - dw) / 2;
-  const dy = (boardH - dh) / 2;
+    /*
+      contain image inside the board so animal heads/tails are not cropped too much
+    */
+    const scale = Math.min(boardW / iw, boardH / ih) * 0.92;
+    const dw = iw * scale;
+    const dh = ih * scale;
+    const dx = (boardW - dw) / 2;
+    const dy = (boardH - dh) / 2;
 
-  x.fillStyle = "#ffffff";
-  x.fillRect(0,0,boardW,boardH);
-  x.drawImage(img,dx,dy,dw,dh);
+    x.fillStyle = "#ffffff";
+    x.fillRect(0,0,boardW,boardH);
 
-  x.fillStyle = "rgba(255,255,255,.04)";
-  x.fillRect(0,0,boardW,boardH);
+    x.fillStyle = "#fff7d6";
+    x.fillRect(0,0,boardW,boardH);
+
+    x.drawImage(img,dx,dy,dw,dh);
+  }catch(error){
+    console.error(error);
+    drawPlaceholder(x, puzzle.name);
+  }
 
   return c;
 }
@@ -1018,7 +404,10 @@ async function buildLevel(){
   guideC.style.height = boardH + "px";
   guideC.style.left = boardLeft + "px";
   guideC.style.top = boardTop + "px";
-  guideC.getContext("2d").drawImage(src,0,0);
+
+  const guideCtx = guideC.getContext("2d");
+  guideCtx.clearRect(0,0,guideC.width,guideC.height);
+  guideCtx.drawImage(src,0,0);
 
   slotsC.width = (boardW + margin * 2) * SCALE;
   slotsC.height = (boardH + margin * 2) * SCALE;
@@ -1028,6 +417,7 @@ async function buildLevel(){
   slotsC.style.top = (boardTop - margin) + "px";
 
   const sx = slotsC.getContext("2d");
+  sx.clearRect(0,0,slotsC.width,slotsC.height);
   sx.scale(SCALE,SCALE);
   sx.strokeStyle = "rgba(90,70,140,.35)";
   sx.lineWidth = 2;
@@ -1123,7 +513,7 @@ function scatterPieces(){
     const maxX = Math.max(4,sw - p.w - 4);
     const maxY = Math.max(trayTop,sh - p.w - 4);
 
-    const x = 4 + Math.random() * (maxX - 4);
+    const x = 4 + Math.random() * Math.max(1,(maxX - 4));
     const y = trayTop + Math.random() * Math.max(1,(maxY - trayTop));
 
     placeAt(p,x,y);
@@ -1264,9 +654,9 @@ function win(){
   },450);
 }
 
-function nextPuzzle(){
+async function nextPuzzle(){
   puzzleIndex = (puzzleIndex + 1) % LEVEL_2_PUZZLES.length;
-  buildLevel();
+  await buildLevel();
 }
 
 function confettiBurst(){
@@ -1305,19 +695,19 @@ function confettiBurst(){
    CONTROLS
    ============================================================ */
 
-document.getElementById("restartBtn").addEventListener("click",()=>{
+document.getElementById("restartBtn").addEventListener("click",async ()=>{
   Snd.pick();
-  buildLevel();
+  await buildLevel();
 });
 
-document.getElementById("skipBtn").addEventListener("click",()=>{
+document.getElementById("skipBtn").addEventListener("click",async ()=>{
   Snd.pick();
-  nextPuzzle();
+  await nextPuzzle();
 });
 
-document.getElementById("nextBtn").addEventListener("click",()=>{
+document.getElementById("nextBtn").addEventListener("click",async ()=>{
   Snd.pick();
-  nextPuzzle();
+  await nextPuzzle();
 });
 
 document.getElementById("homeBtn").addEventListener("click",goHome);
@@ -1354,11 +744,11 @@ muteBtn.addEventListener("click",()=>{
 });
 
 document.querySelectorAll(".level-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
+  btn.addEventListener("click",async ()=>{
     const level = Number(btn.dataset.level);
 
     if(level === 2){
-      startLevel2();
+      await startLevel2();
     }else{
       showToast("Level " + level + " coming soon!");
       Snd.pick();
@@ -1373,10 +763,10 @@ function showToast(message){
   clearTimeout(showToast.timer);
   showToast.timer = setTimeout(()=>{
     toast.classList.remove("show");
-  },1400);
+  },1600);
 }
 
-function startLevel2(){
+async function startLevel2(){
   initAudio();
 
   puzzleIndex = 0;
@@ -1384,26 +774,40 @@ function startLevel2(){
   document.getElementById("gate").style.display = "none";
   document.getElementById("tools").classList.add("show");
 
-  buildLevel();
+  showToast("Loading puzzle...");
+
+  try{
+    await buildLevel();
+    showToast("Drag the pieces!");
+  }catch(error){
+    console.error("Puzzle failed to load:", error);
+
+    document.getElementById("gate").style.display = "flex";
+    document.getElementById("tools").classList.remove("show");
+
+    showToast("Image name problem!");
+    alert("Puzzle image failed to load. Please check the image filenames in puzzle/assets.");
+  }
 }
 
-/* Resize / orientation handling */
+/* ============================================================
+   RESIZE / ORIENTATION
+   ============================================================ */
+
 let rt = null;
 
 window.addEventListener("resize",()=>{
   clearTimeout(rt);
 
-  rt = setTimeout(()=>{
+  rt = setTimeout(async ()=>{
     const w = stage.clientWidth;
     const h = stage.clientHeight;
 
     if(w !== lastW || Math.abs(h-lastH) > lastH * 0.25){
       if(document.getElementById("gate").style.display === "none"){
-        buildLevel();
+        await buildLevel();
       }
     }
   },180);
 });
 </script>
-</body>
-</html>
