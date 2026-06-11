@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
-<title>Puzzle Explorer - Levels 1 and 2</title>
+<title>Puzzle Explorer - Levels 1, 2 and 3</title>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&display=swap");
 :root{--sky:#8eccff;--sky2:#bfe6ff;--orange:#ffb35c;--green:#a8e6a1;--yellow:#ffe066;--pink:#ffb3d1;--purple:#c9b3ff;--ink:#3a2b5c}
@@ -36,16 +36,17 @@ body{font-family:"Fredoka","Baloo 2","Comic Sans MS",system-ui,sans-serif;color:
   <div id="bar"><button id="homeBtn" class="icon-btn" data-icon="🏠" aria-label="Back to menu">🏠</button><div id="title">Puzzle Explorer</div><div class="chip"><small>LEVEL</small><span id="lvlNum">1</span></div><div class="chip"><small>PIECES</small><span id="pieceCount">0/4</span></div><button id="muteBtn" class="icon-btn" data-icon="🔊" aria-label="Sound on or off">🔊</button></div>
   <div id="stage">
     <canvas id="guide"></canvas><canvas id="slots"></canvas>
-    <div id="gate"><div id="scene"><div class="float f1"></div><div class="float f2"></div><div class="float f3"></div><div class="float f4"></div><div class="float f5"></div></div><h1>Puzzle Explorer</h1><p>Pick a level and build the picture!</p><div id="levelButtons"><button class="level-btn active" data-level="1">Level 1 <small>4 fruit pieces</small></button><button class="level-btn active" data-level="2">Level 2 <small>6 animal pieces</small></button><button class="level-btn locked" data-level="3">Level 3 <small>8 pieces soon</small></button><button class="level-btn locked" data-level="4">Level 4 <small>10 pieces soon</small></button><button class="level-btn locked" data-level="5">Level 5 <small>16 pieces soon</small></button></div></div>
+    <div id="gate"><div id="scene"><div class="float f1"></div><div class="float f2"></div><div class="float f3"></div><div class="float f4"></div><div class="float f5"></div></div><h1>Puzzle Explorer</h1><p>Pick a level and build the picture!</p><div id="levelButtons"><button class="level-btn active" data-level="1">Level 1 <small>4 fruit pieces</small></button><button class="level-btn active" data-level="2">Level 2 <small>6 animal pieces</small></button><button class="level-btn active" data-level="3">Level 3 <small>8 vehicle pieces</small></button><button class="level-btn locked" data-level="4">Level 4 <small>10 pieces soon</small></button><button class="level-btn locked" data-level="5">Level 5 <small>16 pieces soon</small></button></div></div>
     <div id="win"><div id="winCard"><div class="star">⭐</div><h2 id="winText">You did it!</h2><p id="winSubText">Great puzzle work!</p><button id="nextBtn" class="big-btn">Next Puzzle →</button></div></div><div id="toast">Coming soon!</div>
   </div>
   <div id="tools"><button id="restartBtn" class="big-btn">🔄 Restart</button><button id="skipBtn" class="big-btn">Skip ⏭</button></div>
 </div>
 <script>
 /* ============================================================
-   PUZZLE EXPLORER - LEVELS 1 AND 2
+   PUZZLE EXPLORER - LEVELS 1, 2 AND 3
    Level 1 = fruits, 4 pieces, folder: puzzle/level1-assets/
    Level 2 = animals, 6 pieces, folder: puzzle/assets/
+   Level 3 = vehicles, 8 pieces, folder: puzzle/level3-assets/
    ============================================================ */
 
 const LEVEL_1_PUZZLES = [
@@ -91,11 +92,36 @@ const LEVEL_2_PUZZLES = [
   { name:"Hippo", image:"assets/vinafrog-hippopotamus-7112622.png" },
   { name:"Blue Whale", image:"assets/whale .png" },
   { name:"Happy Whale", image:"assets/whale 1.png" }
+
+];
+
+const LEVEL_3_PUZZLES = [
+  { name:"School Bus", image:"level3-assets/school-bus.png" },
+  { name:"Fire Truck", image:"level3-assets/fire-truck.png" },
+  { name:"Police Car", image:"level3-assets/police-car.png" },
+  { name:"Ambulance", image:"level3-assets/ambulance.png" },
+  { name:"Train", image:"level3-assets/train.png" },
+  { name:"Airplane", image:"level3-assets/airplane.png" },
+  { name:"Helicopter", image:"level3-assets/helicopter.png" },
+  { name:"Rocket", image:"level3-assets/rocket.png" },
+  { name:"Boat", image:"level3-assets/boat.png" },
+  { name:"Submarine", image:"level3-assets/submarine.png" },
+  { name:"Tractor", image:"level3-assets/tractor.png" },
+  { name:"Dump Truck", image:"level3-assets/dump-truck.png" },
+  { name:"Excavator", image:"level3-assets/excavator.png" },
+  { name:"Bicycle", image:"level3-assets/bicycle.png" },
+  { name:"Scooter", image:"level3-assets/scooter.png" },
+  { name:"Motorcycle", image:"level3-assets/motorcycle.png" },
+  { name:"Race Car", image:"level3-assets/race-car.png" },
+  { name:"Taxi", image:"level3-assets/taxi.png" },
+  { name:"Hot Air Balloon", image:"level3-assets/hot-air-balloon.png" },
+  { name:"Monster Truck", image:"level3-assets/monster-truck.png" }
 ];
 
 const LEVELS = {
   1: { number:1, title:"Level 1", theme:"Fruits", pieces:4, cols:2, rows:2, padding:.82, puzzles:LEVEL_1_PUZZLES },
-  2: { number:2, title:"Level 2", theme:"Animals", pieces:6, cols:3, rows:2, padding:.90, puzzles:LEVEL_2_PUZZLES }
+  2: { number:2, title:"Level 2", theme:"Animals", pieces:6, cols:3, rows:2, padding:.90, puzzles:LEVEL_2_PUZZLES },
+  3: { number:3, title:"Level 3", theme:"Vehicles", pieces:8, cols:4, rows:2, padding:.86, puzzles:LEVEL_3_PUZZLES }
 };
 
 const PRAISE = ["You did it!","Great job!","Awesome!","Yay!","Wonderful!","Amazing!","Super!","Nice work!"];
@@ -615,7 +641,7 @@ async function startLevel(levelNumber){
     document.getElementById("gate").style.display = "flex";
     document.getElementById("tools").classList.remove("show");
     showToast("Image name problem!");
-    alert("Puzzle image failed to load. Please check the filenames in puzzle/level1-assets or puzzle/assets.");
+    alert("Puzzle image failed to load. Please check the filenames in puzzle/level1-assets, puzzle/assets, or puzzle/level3-assets.");
   }
 }
 
